@@ -107,9 +107,9 @@ const Signup: React.FC = () => {
           isLoading={isLoading}
         />
       </form>
-      <div className="pt-3">
+      <div className="pt-3 ">
         Already have an account?
-        <Link to="/login" className="font-bold cursor-pointer text-black pl-1">
+        <Link to="/login" className="font-bold cursor-pointer text-black pl-1 ">
           Login
         </Link>
       </div>

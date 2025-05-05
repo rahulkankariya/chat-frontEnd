@@ -36,7 +36,8 @@ const Login: React.FC = () => {
   };
 
   return (
-    <FormContainer title="Login" error={apiError}>
+    <div>
+<FormContainer title="Sign With Continue" error={apiError}>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 mt-4"
@@ -75,6 +76,8 @@ const Login: React.FC = () => {
         </Link>
       </div>
     </FormContainer>
+    </div>
+    
   );
 };
 

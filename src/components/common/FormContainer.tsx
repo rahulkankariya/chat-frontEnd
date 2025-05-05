@@ -18,6 +18,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
       className="flex items-center justify-center min-h-screen px-4"
       style={{ backgroundColor: "#E5E7EB" }}
     >
+      
       <Paper elevation={3} className="p-8 w-full max-w-md">
         <Logo />
         <Typography
