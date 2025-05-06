@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       {/* Sidebar - fixed width */}
-      <div className="w-64 h-full  border-r">
+      <div className="w-80 h-full  border-r">
         <Sidebar
           users={users}
           selectedUser={selectedUser.name}
