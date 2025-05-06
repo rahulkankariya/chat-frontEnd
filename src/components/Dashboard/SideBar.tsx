@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
       </ul>
 
       {/* Desktop Menu (always visible) */}
-      <ul className="sm:flex sm:flex-col sm:space-y-1 sm:p-2 sm:overflow-y-auto sm:block hidden overflow-x-hidden">
+      <ul className="sm:flex-col sm:space-y-1 sm:p-2 sm:overflow-y-auto sm:block hidden overflow-x-hidden">
         {users.map((user, index) => (
           <UserProfile
             key={`${user.name}-${index}`}

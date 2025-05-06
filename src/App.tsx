@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, Suspense } from "react";
+// src/App.tsx
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,11 +7,13 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
+import { createContext, useContext, useState, useEffect, ReactNode, Suspense } from "react";
 import ProtectedRoute from "./components/Routes/protectedRoutes";
 import routes from "./routes";
 import Loader from "./components/Pages/loader";
-import './App.css'
-// Authentication context
+import { SocketProvider } from "./socket/SocketContext";
+import "./App.css";
+
 interface AuthContextType {
   token: string | null;
   setToken: (token: string | null) => void;
@@ -19,7 +21,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Provide authentication state
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -34,7 +35,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
-// Handle redirects for authenticated users
 const AuthManager: React.FC = () => {
   const { setToken } = useContext(AuthContext)!;
   const navigate = useNavigate();
@@ -51,34 +51,35 @@ const AuthManager: React.FC = () => {
   return null;
 };
 
-// Main app
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AuthManager />
-        <Suspense fallback={<div><Loader/></div>}>
-          <Routes>
-            {routes.map((route) => (
+      <SocketProvider>
+        <Router>
+          <AuthManager />
+          <Suspense fallback={<div><Loader /></div>}>
+            <Routes>
+              {routes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={
+                    route.protected ? (
+                      <ProtectedRoute>{route.element}</ProtectedRoute>
+                    ) : (
+                      route.element
+                    )
+                  }
+                />
+              ))}
               <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  route.protected ? (
-                    <ProtectedRoute>{route.element}</ProtectedRoute>
-                  ) : (
-                    route.element
-                  )
-                }
+                path="*"
+                element={<Navigate to={localStorage.getItem("token") ? "/dashboard" : "/login"} replace />}
               />
-            ))}
-            <Route
-              path="*"
-              element={<Navigate to={localStorage.getItem("token") ? "/dashboard" : "/login"} replace />}
-            />
-          </Routes>
-        </Suspense>
-      </Router>
+            </Routes>
+          </Suspense>
+        </Router>
+      </SocketProvider>
     </AuthProvider>
   );
 };
