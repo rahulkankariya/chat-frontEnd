@@ -33,7 +33,7 @@ const Signup: React.FC = () => {
 
     const { confirmPassword, ...payload } = data;
 
-    const response = await apiService.post("/api/signup", payload);
+    const response = await apiService.post("/signup", payload);
 
     if (response.success) {
       navigate("/dashboard");

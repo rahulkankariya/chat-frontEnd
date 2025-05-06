@@ -14,7 +14,7 @@ interface RequestOptions {
   headers?: Record<string, string>;
 }
 
-const BASE_URL =  "http://localhost:3000";
+const BASE_URL = "http://localhost:9000/api/v1/";
 
 const apiService = {
   async request<T>(url: string, options: RequestOptions): Promise<ApiResponse<T>> {
@@ -36,12 +36,22 @@ const apiService = {
         config.body = JSON.stringify(data);
       }
 
-      const fullUrl = `${BASE_URL}${url.startsWith("/") ? url : `/${url}`}`;
+      const fullUrl = `${BASE_URL}${url.startsWith("/") ? url.slice(1) : url}`;
       const response = await fetch(fullUrl, config);
       const result = await response.json();
 
-      if (response.ok && result.success) {
-        return { success: true, data: result.user || result };
+      // console.log("Result ==>", result, "response.ok", response.ok);
+
+      if (response.status === 401) {
+        // Unauthorized - handle logout
+        localStorage.removeItem("token");
+        toast.error("Session expired. Please log in again.");
+        window.location.href = "/login";
+        return { success: false, message: "Unauthorized" };
+      }
+
+      if (response.ok && result.status) {
+        return { success: true, data: result.data || result };
       } else {
         toast.error(result.message || `${method} request failed`);
         return { success: false, message: result.message || `${method} request failed` };
