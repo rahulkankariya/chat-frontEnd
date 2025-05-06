@@ -7,33 +7,13 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { createContext, useContext, useState, useEffect, ReactNode, Suspense } from "react";
+import { useContext, useEffect, Suspense } from "react";
+import { AuthProvider, AuthContext } from "./context/AuthContextType";
 import ProtectedRoute from "./components/Routes/protectedRoutes";
 import routes from "./routes";
 import Loader from "./components/Pages/loader";
 import { SocketProvider } from "./socket/SocketContext";
 import "./App.css";
-
-interface AuthContextType {
-  token: string | null;
-  setToken: (token: string | null) => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
-
-  return (
-    <AuthContext.Provider value={{ token, setToken }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
 
 const AuthManager: React.FC = () => {
   const { setToken } = useContext(AuthContext)!;
@@ -85,4 +65,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-export { AuthContext };
