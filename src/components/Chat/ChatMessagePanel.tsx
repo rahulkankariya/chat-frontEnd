@@ -8,7 +8,8 @@ import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 import AudioRecorder from '../Pages/audioRecorder';
-
+import CallIcon from '@mui/icons-material/Call';
+import VideocamIcon from '@mui/icons-material/Videocam';
 interface Message {
   text?: string;
   audioUrl?: string;
@@ -133,12 +134,13 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online })
 
         {/* Audio/Video Call Buttons */}
         <div className="flex gap-2">
-          <IconButton className="hover:text-blue-500" aria-label="audio call">
-            <MicIcon />
-          </IconButton>
-          <IconButton className="hover:text-blue-500" aria-label="video call">
-            <MicIcon />
-          </IconButton>
+        <IconButton className="hover:text-blue-500" aria-label="audio call">
+  <CallIcon />
+</IconButton>
+
+<IconButton className="hover:text-blue-500" aria-label="video call">
+  <VideocamIcon />
+</IconButton>
         </div>
       </div>
 
