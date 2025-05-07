@@ -3,7 +3,7 @@ import { lazy, ReactNode } from "react";
 // Lazy-loaded components
 const Login = lazy(() => import("./components/Auth/Login"));
 const Signup = lazy(() => import("./components/Auth/Signup"));
-const Dashboard = lazy(() => import("./components/Dashboard/Dashboard"));
+const Dashboard = lazy(() => import("./components/Chat/ChatDashboard"));
 // const Profile = lazy(() => import("./components/User/Profile"));
 
 // Route configuration type
