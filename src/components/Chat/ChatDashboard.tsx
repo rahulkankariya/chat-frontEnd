@@ -2,18 +2,14 @@ import React, { useState } from 'react';
 import { ChatUser } from '../../interface/ChatUser';
 import Sidebar from './ChatSidebar';
 import MessagePanel from './ChatMessagePanel';
-interface SidebarProps {
-  users: ChatUser[];
-  selectedUser: string;
-  onSelectUser: (user: ChatUser) => void;
-}
+
 
 const Dashboard: React.FC = () => {
   const users: ChatUser[] = [
 
-    { id: 1, name: 'Rahul Kankariya', avatar: 'https://randomuser.me/api/portraits/men/12.jpg', online: true },
+    { id: 1, name: 'Rahul Kankariya', avatar: 'https://randomuser.me/api/portraits/men/12.jpg', online: false },
     
-    { id: 2, name: 'Alice Johnson', avatar: 'https://randomuser.me/api/portraits/women/21.jpg', online: true },
+    { id: 2, name: 'Alice Johnson', avatar: 'https://randomuser.me/api/portraits/women/21.jpg', online: false },
     { id: 3, name: 'Bob Smith', avatar: 'https://randomuser.me/api/portraits/men/34.jpg', online: true },
     { id: 4, name: 'Chloe Davis', avatar: 'https://randomuser.me/api/portraits/women/42.jpg', online: true },
     { id: 5, name: 'Daniel Lee', avatar: 'https://randomuser.me/api/portraits/men/51.jpg', online: true },
@@ -61,6 +57,7 @@ const Dashboard: React.FC = () => {
         <MessagePanel
           userName={selectedUser.name}
           avatar={selectedUser.avatar}
+          online={selectedUser.online}
         />
        
       </div>
