@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { IconButton, InputAdornment, TextField } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 import SendIcon from '@mui/icons-material/Send';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
-import CallIcon from '@mui/icons-material/Call';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
+
+import AudioRecorder from '../Pages/audioRecorder';
+
 interface Message {
-  text: string;
+  text?: string;
+  audioUrl?: string;
   fromMe: boolean;
   timestamp: number;
   status?: 'pending' | 'sent' | 'delivered' | 'read';
@@ -18,7 +20,7 @@ interface Message {
 interface MessagePanelProps {
   userName: string;
   avatar: string;
-  online:boolean
+  online: boolean;
 }
 
 const formatDate = (timestamp: number): string => {
@@ -47,24 +49,18 @@ const formatDate = (timestamp: number): string => {
   });
 };
 
-const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar,online }) => {
+const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online }) => {
   const [messages, setMessages] = useState<Message[]>([
     { text: `Hey ${userName}, how's it going?`, fromMe: true, timestamp: Date.now(), status: 'sent' },
     { text: "I'm doing great, thanks!", fromMe: false, timestamp: Date.now() },
     { text: "How about you?", fromMe: false, timestamp: Date.now() },
-    {
-      text: "Old message",
-      fromMe: false,
-      timestamp: Date.now() - 86400000 * 2,
-    },
-    {
-      text: "Older message",
-      fromMe: false,
-      timestamp: Date.now() - 86400000 * 3,
-    },
+    { text: "Old message", fromMe: false, timestamp: Date.now() - 86400000 * 2 },
+    { text: "Older message", fromMe: false, timestamp: Date.now() - 86400000 * 3 },
   ]);
 
   const [input, setInput] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const sendMessage = () => {
@@ -83,6 +79,18 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar,online }) 
       ]);
       setInput('');
     }
+  };
+
+  const handleVoiceMessage = (blob: Blob, url: string) => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        audioUrl: url,
+        fromMe: true,
+        timestamp: Date.now(),
+      },
+    ]);
+    setAudioUrl(url); // Set audioUrl to display audio controls
   };
 
   useEffect(() => {
@@ -114,27 +122,25 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar,online }) 
   return (
     <div className="flex flex-col h-full rounded-[10px]">
       {/* Header */}
-     {/* Header */}
-<div className="flex justify-between items-center gap-3 p-4 shadow">
-  <div className="flex items-center gap-3">
-    <img src={avatar} alt={userName} className="w-10 h-10 rounded-full" />
-    <div>
-      <h2 className="font-semibold">{userName}</h2>
-      <p className="text-xs">{online ? 'Online' : 'Offline'}</p>
-    </div>
-  </div>
+      <div className="flex justify-between items-center gap-3 p-4 shadow">
+        <div className="flex items-center gap-3">
+          <img src={avatar} alt={userName} className="w-10 h-10 rounded-full" />
+          <div>
+            <h2 className="font-semibold">{userName}</h2>
+            <p className="text-xs">{online ? 'Online' : 'Offline'}</p>
+          </div>
+        </div>
 
-  {/* Audio/Video Call Buttons */}
-  <div className="flex gap-2">
-    <IconButton className="hover:text-blue-500" aria-label="audio call">
-      <CallIcon />
-    </IconButton>
-    <IconButton className="hover:text-blue-500" aria-label="video call">
-      <VideoCallIcon />
-    </IconButton>
-  </div>
-</div>
-
+        {/* Audio/Video Call Buttons */}
+        <div className="flex gap-2">
+          <IconButton className="hover:text-blue-500" aria-label="audio call">
+            <MicIcon />
+          </IconButton>
+          <IconButton className="hover:text-blue-500" aria-label="video call">
+            <MicIcon />
+          </IconButton>
+        </div>
+      </div>
 
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -162,6 +168,9 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar,online }) 
                     }`}
                   >
                     {msg.text}
+                    {msg.audioUrl && (
+                      <audio controls src={msg.audioUrl} className="mt-1" />
+                    )}
                     <div className="flex justify-end items-center gap-1 mt-1 text-[10px] text-gray-500">
                       <span>
                         {new Date(msg.timestamp).toLocaleTimeString([], {
@@ -180,14 +189,12 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar,online }) 
       </div>
 
       {/* Input Area */}
-      <div className="flex items-center gap-3  bg-[#F0F2F5]">
+      <div className="p-1 flex items-center gap-3 bg-[#F0F2F5]">
         <div className="flex gap-3 items-center">
           <IconButton>
             <AttachFileIcon className="text-gray-500" />
           </IconButton>
-          <IconButton>
-            <MicIcon className="text-gray-500" />
-          </IconButton>
+          <AudioRecorder onStop={handleVoiceMessage} />
         </div>
 
         <TextField
