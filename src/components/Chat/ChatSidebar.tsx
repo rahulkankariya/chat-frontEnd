@@ -11,12 +11,17 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'personal' | 'groups'>('all');
+  const [isSearchOpen, setIsSearchOpen] = useState(false); // State to toggle search bar visibility
+  const [searchQuery, setSearchQuery] = useState(''); // State to store the search query
 
   const tabs: ('all' | 'personal' | 'groups')[] = ['all', 'personal', 'groups'];
 
   const filteredUsers = users.filter((user) => {
     if (activeTab === 'all') return true;
     return user.type === activeTab;
+  }).filter((user) => {
+    // Filter users based on the search query
+    return user.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   return (
@@ -41,30 +46,46 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
             <span className="text-sm text-gray-500">Info Account</span>
           </div>
         </div>
-        <Search style={{ fontSize: 24 }} className="text-gray-600" />
+        <Search
+          style={{ fontSize: 24 }}
+          className="text-gray-600 cursor-pointer"
+          onClick={() => setIsSearchOpen(!isSearchOpen)} // Toggle search bar visibility
+        />
       </div>
+
+      {/* Search Bar */}
+      {isSearchOpen && (
+        <div className="px-4 py-2">
+          <input
+            type="text"
+            placeholder="Search users..."
+            className="w-full p-2 rounded-md border border-gray-300"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="w-full px-2 p-5 rounded-md">
-  <div className="flex gap-1 bg-[#F7F7F7] border border-[#F7F7F7] p-3 rounded-3xl">
-    {tabs.map((tab) => (
-      <div
-        key={tab}
-        onClick={() => setActiveTab(tab)}
-        className={`flex-1 text-center capitalize text-sm font-bold py-[3px] rounded-3xl cursor-pointer transition
-          ${activeTab === tab ? 'bg-white text-[#3A60AE]' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold'}`}
-      >
-        {tab}
+        <div className="flex gap-1 bg-[#F7F7F7] border border-[#F7F7F7] p-3 rounded-3xl">
+          {tabs.map((tab) => (
+            <div
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 text-center capitalize text-sm font-bold py-[3px] rounded-3xl cursor-pointer transition
+                ${activeTab === tab ? 'bg-white text-[#3A60AE]' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold'}`}
+            >
+              {tab}
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
-
 
       {/* User List */}
       <ul
-        className="flex-1 overflow-y-auto p-2 space-y-1"
-        style={{ maxHeight: 'calc(100vh - 110px)' }}
+        className="flex-1 overflow-y-auto p-2 space-y-1 bg-white" // Scrollable and white background
+        style={{ maxHeight: 'calc(100vh - 180px)' }} // Adjust the height to fit the screen
       >
         {filteredUsers.map((user) => (
           <UserProfile

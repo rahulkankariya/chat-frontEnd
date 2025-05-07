@@ -180,7 +180,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar,online }) 
       </div>
 
       {/* Input Area */}
-      <div className="p-4 flex items-center gap-3 border-t">
+      <div className="p-2 flex items-center gap-3  bg-[#F0F2F5]">
         <div className="flex gap-3 items-center">
           <IconButton>
             <AttachFileIcon className="text-gray-500" />
