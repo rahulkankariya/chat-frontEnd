@@ -52,19 +52,13 @@ const UserProfile: React.FC<UserProfileProps> = ({
           <span className="text-[10px] text-gray-400">{lastMessageTime}</span>
         </div>
         <div className="flex justify-between items-center gap-1 text-xs text-gray-500 truncate">
-          {/* Message text */}
-          <span className="truncate">{message}</span>
-
           {/* Message status icon */}
+          <span className="truncate">{message}</span>
           {messageStatus === 'pending' && (
             <HourglassBottomIcon fontSize="inherit" />
           )}
-          {messageStatus === 'sent' && (
-            <DoneIcon fontSize="inherit" />
-          )}
-          {messageStatus === 'delivered' && (
-            <DoneAllIcon fontSize="inherit" />
-          )}
+          {messageStatus === 'sent' && <DoneIcon fontSize="inherit" />}
+          {messageStatus === 'delivered' && <DoneAllIcon fontSize="inherit" />}
           {messageStatus === 'read' && (
             <DoneAllIcon fontSize="inherit" className="text-blue-500" />
           )}

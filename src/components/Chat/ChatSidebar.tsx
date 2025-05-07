@@ -5,7 +5,7 @@ import UserProfile from './UserProfile';
 
 interface SidebarProps {
   users: ChatUser[];
-  selectedUser: string;
+  selectedUser: number; // Change selectedUser to number for user id
   onSelectUser: (user: ChatUser) => void;
 }
 
@@ -13,17 +13,17 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
   const [isOpen, setIsOpen] = useState(false);
 
   const renderUserList = () =>
-    users.map((user, index) => (
+    users.map((user) => (
       <UserProfile
-        key={`${user.name}-${index}`}
+        key={user.id} // Use unique id as the key
         avatar={user.avatar}
         name={user.name}
         online={user.online}
         onSelectUser={() => onSelectUser(user)}
-        isSelected={selectedUser === user.name}
+        isSelected={selectedUser === user.id} // Compare by user.id (number)
         message="Hello! How are you?"
         lastMessageTime="10:45 AM"
-        messageStatus={['pending', 'sent', 'delivered', 'read'][index % 4] as any}
+        messageStatus={['pending', 'sent', 'delivered', 'read'][user.id % 4] as any}
       />
     ));
 

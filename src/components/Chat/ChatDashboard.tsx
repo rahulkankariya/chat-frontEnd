@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChatUser } from '../../interface/ChatUser';
 import Sidebar from './ChatSidebar';
+import MessagePanel from './ChatMessagePanel';
 interface SidebarProps {
   users: ChatUser[];
   selectedUser: string;
@@ -11,8 +12,7 @@ const Dashboard: React.FC = () => {
   const users: ChatUser[] = [
 
     { id: 1, name: 'Rahul Kankariya', avatar: 'https://randomuser.me/api/portraits/men/12.jpg', online: true },
-    { id: 1, name: 'Rahul Kankariya', avatar: 'https://randomuser.me/api/portraits/men/12.jpg', online: true },
-
+    
     { id: 2, name: 'Alice Johnson', avatar: 'https://randomuser.me/api/portraits/women/21.jpg', online: true },
     { id: 3, name: 'Bob Smith', avatar: 'https://randomuser.me/api/portraits/men/34.jpg', online: true },
     { id: 4, name: 'Chloe Davis', avatar: 'https://randomuser.me/api/portraits/women/42.jpg', online: true },
@@ -49,15 +49,20 @@ const Dashboard: React.FC = () => {
         <div className="p-4">
         <Sidebar
           users={users}
-          selectedUser={selectedUser.name}
+          selectedUser={selectedUser.id}
           onSelectUser={(user) => setSelectedUser(user)}
         />
         </div>
       </div>
 
       {/* Message Panel */}
-      <div className="flex-1 h-full bg-white shadow-md rounded-[10px] ml-4">
-        <div className="p-4">Message content</div>
+      <div className="flex-1 bg-white shadow-md rounded-[10px] ml-4">
+        
+        <MessagePanel
+          userName={selectedUser.name}
+          avatar={selectedUser.avatar}
+        />
+       
       </div>
     </div>
   );
