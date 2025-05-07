@@ -18,9 +18,10 @@ const FormContainer: React.FC<FormContainerProps> = ({
       className="flex items-center justify-center min-h-screen px-4"
       style={{ backgroundColor: "#E5E7EB" }}
     >
-      
-      <Paper elevation={3} className="p-8 w-full max-w-md">
-        <Logo />
+      <div>
+      <Logo />
+      <Paper elevation={3} className="w-full max-w-md" style={{padding:"60px"}}>
+        
         <Typography
           variant="h5"
           align="center"
@@ -37,6 +38,8 @@ const FormContainer: React.FC<FormContainerProps> = ({
         )}
         {children}
       </Paper>
+      </div>
+     
     </div>
   );
 };

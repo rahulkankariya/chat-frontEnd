@@ -36,15 +36,6 @@ const Login: React.FC = () => {
       // console.log("user=?",response?.data)
       if (token) {
         saveUserToStorage(token,user)
-        // localStorage.setItem("token", token);
-        // if (user) {
-        //   localStorage.setItem("firstName",user?.firstName || "");
-        //   localStorage.setItem("lastName",user?.lastName|| "");
-        //   localStorage.setItem("userName",user?.userName|| "");
-        //   localStorage.setItem("avtar",user?.avtar|| "");
-        //   // Store user object as a string
-        // }
-     // Store token in localStorage
         navigate("/dashboard");
       } else {
         setApiError("Token not received.");

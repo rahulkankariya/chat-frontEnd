@@ -10,7 +10,7 @@ interface LogoProps {
 const Logo: React.FC<LogoProps> = ({
   name = 'Chat Application',
   size = 'w-auto',
-  bgColor = 'bg-white',
+  bgColor = '',
   textColor = 'text-black',
   
 }) => {
