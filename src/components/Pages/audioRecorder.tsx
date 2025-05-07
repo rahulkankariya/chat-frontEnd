@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import MicIcon from '@mui/icons-material/Mic';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Button } from '@mui/material';
 
 interface AudioRecorderProps {
   onStop: (blob: Blob, url: string) => void;
@@ -8,52 +10,76 @@ interface AudioRecorderProps {
 const AudioRecorder: React.FC<AudioRecorderProps> = ({ onStop }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [timer, setTimer] = useState(0); // State for timer
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]); // This will hold the recorded chunks
-  const timerRef = useRef<number | null>(null); // To store the timer interval ID, using 'number'
+  const [timer, setTimer] = useState(0);
 
-  // Start or stop the recording
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<number | null>(null);
+  const isResettingRef = useRef<boolean>(false);
+
   const handleStartStopRecording = async () => {
     if (isRecording) {
-      // Stop the recording
+      if (timer < 2) {
+        console.warn('Recording must be at least 2 seconds.');
+        return;
+      }
+
       mediaRecorderRef.current?.stop();
       setIsRecording(false);
       if (timerRef.current !== null) {
-        clearInterval(timerRef.current); // Stop the timer when recording stops
-        timerRef.current = null; // Reset the timer reference
+        clearInterval(timerRef.current);
+        timerRef.current = null;
       }
-      setTimer(0); // Reset the timer state to 0
+      setTimer(0);
     } else {
-      // Start the recording
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorderRef.current = new MediaRecorder(stream);
 
-      mediaRecorderRef.current.ondataavailable = (e) => {
-        audioChunksRef.current.push(e.data); // Collect the audio data
-      };
+        mediaRecorderRef.current.ondataavailable = (e) => {
+          audioChunksRef.current.push(e.data);
+        };
 
-      mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        const url = URL.createObjectURL(audioBlob);
-        setAudioUrl(url);
-        audioChunksRef.current = []; // Clear chunks after recording is stopped
-        if (onStop) {
-          onStop(audioBlob, url); // Call the onStop callback
-        }
-      };
+        mediaRecorderRef.current.onstop = () => {
+          if (!isResettingRef.current) {
+            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+            const url = URL.createObjectURL(audioBlob);
+            setAudioUrl(url);
+            audioChunksRef.current = [];
+            onStop(audioBlob, url);
+          }
 
-      mediaRecorderRef.current.start();
-      setIsRecording(true);
+          mediaRecorderRef.current?.stream.getTracks().forEach((track) => track.stop());
+          audioChunksRef.current = [];
+          isResettingRef.current = false;
+        };
 
-      // Start the timer
-      timerRef.current = window.setInterval(() => {
-        setTimer((prev) => prev + 1); // Increment the timer every second
-      }, 1000);
+        mediaRecorderRef.current.start();
+        setIsRecording(true);
+
+        timerRef.current = window.setInterval(() => {
+          setTimer((prev) => prev + 1);
+        }, 1000);
+      } catch (error) {
+        console.error('Error accessing microphone:', error);
+      }
     }
   };
 
-  // Format the timer into MM:SS format
+  const handleResetRecording = () => {
+    if (isRecording) {
+      isResettingRef.current = true;
+      mediaRecorderRef.current?.stop();
+      setIsRecording(false);
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      setTimer(0);
+      setAudioUrl(null);
+    }
+  };
+
   const formatTimer = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -62,7 +88,6 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onStop }) => {
 
   return (
     <div className="flex items-center space-x-4">
-      {/* Mic Button */}
       <button
         onClick={handleStartStopRecording}
         style={{
@@ -77,10 +102,16 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onStop }) => {
         <MicIcon style={{ color: isRecording ? 'white' : 'black' }} />
       </button>
 
-      {/* Timer */}
       {isRecording && (
-        <div className="text-lg font-semibold text-green-500">
-          {formatTimer(timer)} {/* Display the timer */}
+        <div className="flex items-center space-x-2">
+          <div className="text-lg font-semibold text-green-500">
+            {formatTimer(timer)}
+          </div>
+          <Button
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleResetRecording}
+          />
         </div>
       )}
     </div>
