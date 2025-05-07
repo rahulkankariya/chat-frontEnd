@@ -1,59 +1,86 @@
 import React, { useState } from 'react';
 import { ChatUser } from '../../interface/ChatUser';
-import { Menu, Close, Edit } from '@mui/icons-material';
+import { Search } from '@mui/icons-material';
 import UserProfile from './UserProfile';
 
 interface SidebarProps {
   users: ChatUser[];
-  selectedUser: number; // Change selectedUser to number for user id
+  selectedUser: number;
   onSelectUser: (user: ChatUser) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'all' | 'personal' | 'groups'>('all');
 
-  const renderUserList = () =>
-    users.map((user) => (
-      <UserProfile
-        key={user.id} // Use unique id as the key
-        avatar={user.avatar}
-        name={user.name}
-        online={user.online}
-        onSelectUser={() => onSelectUser(user)}
-        isSelected={selectedUser === user.id} // Compare by user.id (number)
-        message="Hello! How are you?"
-        lastMessageTime="10:45 AM"
-        messageStatus={['pending', 'sent', 'delivered', 'read'][user.id % 4] as any}
-      />
-    ));
+  const tabs: ('all' | 'personal' | 'groups')[] = ['all', 'personal', 'groups'];
+
+  const filteredUsers = users.filter((user) => {
+    if (activeTab === 'all') return true;
+    return user.type === activeTab;
+  });
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-[10px] shadow-md ">
+    <div className="flex flex-col h-full bg-white rounded-[10px] shadow-md">
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b">
-        <h3 className="text-lg font-semibold">Rahul_Kankariya</h3>
-        <div className="flex items-center gap-2">
-          <button onClick={() => alert('Edit Profile')}>
-            <Edit className="w-5 h-5 text-gray-600" />
-          </button>
-          <button className="sm:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? (
-              <Close className="w-6 h-6 text-gray-600" />
-            ) : (
-              <Menu className="w-6 h-6 text-gray-600" />
-            )}
-          </button>
+      <div className="flex items-center justify-between p-4 ">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <img
+              src={users[16]?.avatar}
+              alt="Profile"
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <span
+              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                users[16]?.online ? 'bg-green-500' : 'bg-red-400'
+              }`}
+            ></span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold">{users[16].name}</span>
+            <span className="text-sm text-gray-500">Info Account</span>
+          </div>
         </div>
+        <Search style={{ fontSize: 24 }} className="text-gray-600" />
       </div>
 
-      {/* User List with Scroll */}
-      <ul
-        className={`flex-1 overflow-y-auto p-2 space-y-1 ${
-          isOpen ? 'block sm:block' : 'hidden sm:block'
-        }`}
-        style={{ maxHeight: 'calc(100vh - 110px)' }} // adjust header height
+      {/* Tabs */}
+      <div className="w-full px-2 p-5 rounded-md">
+  <div className="flex gap-1 bg-[#F7F7F7] border border-[#F7F7F7] p-3 rounded-3xl">
+    {tabs.map((tab) => (
+      <div
+        key={tab}
+        onClick={() => setActiveTab(tab)}
+        className={`flex-1 text-center capitalize text-sm font-bold py-[3px] rounded-3xl cursor-pointer transition
+          ${activeTab === tab ? 'bg-white text-[#3A60AE]' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold'}`}
       >
-        {renderUserList()}
+        {tab}
+      </div>
+    ))}
+  </div>
+</div>
+
+
+      {/* User List */}
+      <ul
+        className="flex-1 overflow-y-auto p-2 space-y-1"
+        style={{ maxHeight: 'calc(100vh - 110px)' }}
+      >
+        {filteredUsers.map((user) => (
+          <UserProfile
+            key={user.id}
+            avatar={user.avatar}
+            name={user.name}
+            online={user.online}
+            onSelectUser={() => onSelectUser(user)}
+            isSelected={selectedUser === user.id}
+            message="Hello! How are you?"
+            lastMessageTime="10:45 AM"
+            messageStatus={
+              ['pending', 'sent', 'delivered', 'read'][user.id % 4] as any
+            }
+          />
+        ))}
       </ul>
     </div>
   );
