@@ -6,7 +6,8 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
-
+import CallIcon from '@mui/icons-material/Call';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
 interface Message {
   text: string;
   fromMe: boolean;
@@ -113,13 +114,27 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar,online }) 
   return (
     <div className="flex flex-col h-full rounded-[10px]">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 shadow">
-        <img src={avatar} alt={userName} className="w-10 h-10 rounded-full" />
-        <div>
-          <h2 className="font-semibold">{userName}</h2>
-          <p className="text-xs">{online == true ?"Online":"Offline"}</p>
-        </div>
-      </div>
+     {/* Header */}
+<div className="flex justify-between items-center gap-3 p-4 shadow">
+  <div className="flex items-center gap-3">
+    <img src={avatar} alt={userName} className="w-10 h-10 rounded-full" />
+    <div>
+      <h2 className="font-semibold">{userName}</h2>
+      <p className="text-xs">{online ? 'Online' : 'Offline'}</p>
+    </div>
+  </div>
+
+  {/* Audio/Video Call Buttons */}
+  <div className="flex gap-2">
+    <IconButton className="hover:text-blue-500" aria-label="audio call">
+      <CallIcon />
+    </IconButton>
+    <IconButton className="hover:text-blue-500" aria-label="video call">
+      <VideoCallIcon />
+    </IconButton>
+  </div>
+</div>
+
 
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
