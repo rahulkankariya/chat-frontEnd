@@ -46,13 +46,13 @@ const Dashboard: React.FC = () => {
     <div className="flex h-screen w-screen overflow-hidden bg-[#F8F7FC] p-4">
       {/* Sidebar */}
       <div className="w-80 h-full bg-white shadow-md rounded-[10px]">
-        <div className="p-4">
+       
         <Sidebar
           users={users}
           selectedUser={selectedUser.id}
           onSelectUser={(user) => setSelectedUser(user)}
         />
-        </div>
+      
       </div>
 
       {/* Message Panel */}

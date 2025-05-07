@@ -28,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
     ));
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-[10px] shadow-md">
+    <div className="flex flex-col h-full bg-white rounded-[10px] shadow-md ">
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b">
         <h3 className="text-lg font-semibold">Rahul_Kankariya</h3>
@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
         className={`flex-1 overflow-y-auto p-2 space-y-1 ${
           isOpen ? 'block sm:block' : 'hidden sm:block'
         }`}
-        style={{ maxHeight: 'calc(100vh - 125px)' }} // adjust header height
+        style={{ maxHeight: 'calc(100vh - 110px)' }} // adjust header height
       >
         {renderUserList()}
       </ul>
