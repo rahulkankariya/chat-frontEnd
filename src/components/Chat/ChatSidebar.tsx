@@ -25,9 +25,9 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
   });
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-[10px] shadow-md">
+    <div className="flex flex-col h-full bg-white shadow-md rounded-[10px] md:w-80 w-full"> {/* Added responsive width */}
       {/* Header */}
-      <div className="flex items-center justify-between p-4 ">
+      <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <div className="relative">
             <img
@@ -36,9 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
               className="w-12 h-12 rounded-full object-cover"
             />
             <span
-              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                users[16]?.online ? 'bg-green-500' : 'bg-red-400'
-              }`}
+              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${users[16]?.online ? 'bg-green-500' : 'bg-red-400'}`}
             ></span>
           </div>
           <div className="flex flex-col">
@@ -84,8 +82,8 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
 
       {/* User List */}
       <ul
-        className="flex-1 overflow-y-auto p-2 space-y-1 bg-white" // Scrollable and white background
-        style={{ maxHeight: 'calc(100vh - 180px)' }} // Adjust the height to fit the screen
+        className="flex-1 overflow-y-auto p-2 space-y-1 bg-white"
+        style={{ maxHeight: 'calc(100vh - 240px)' }} // Adjusted height for better fit
       >
         {filteredUsers.map((user) => (
           <UserProfile
@@ -97,9 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
             isSelected={selectedUser === user.id}
             message="Hello! How are you?"
             lastMessageTime="10:45 AM"
-            messageStatus={
-              ['pending', 'sent', 'delivered', 'read'][user.id % 4] as any
-            }
+            messageStatus={['pending', 'sent', 'delivered', 'read'][user.id % 4] as any}
           />
         ))}
       </ul>
