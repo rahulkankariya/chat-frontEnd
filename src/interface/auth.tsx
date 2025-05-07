@@ -3,6 +3,8 @@ export interface userDetails {
     id: number;
     firstName: string;
     lastName: string;
+    userName:string
+    avtar:string
   }
   
   export interface LoginResponse {

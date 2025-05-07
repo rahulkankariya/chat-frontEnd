@@ -8,7 +8,7 @@ import TextInput from "../common/TextInput";
 import SubmitButton from "../common/SubmitButton";
 import apiService from "../../services/apiService";
 import { LoginResponse } from "../../interface/auth";
-
+import {saveUserToStorage} from '../../utils/storage'
 type FormData = {
   email: string;
   password: string;
@@ -35,11 +35,15 @@ const Login: React.FC = () => {
       const user = response.data?.userDetails;   // Safe to access 'user'
       // console.log("user=?",response?.data)
       if (token) {
-        localStorage.setItem("token", token);
-        if (user) {
-          localStorage.setItem("firstName",user?.firstName || "");
-          localStorage.setItem("lastName",user?.lastName|| ""); // Store user object as a string
-        }
+        saveUserToStorage(token,user)
+        // localStorage.setItem("token", token);
+        // if (user) {
+        //   localStorage.setItem("firstName",user?.firstName || "");
+        //   localStorage.setItem("lastName",user?.lastName|| "");
+        //   localStorage.setItem("userName",user?.userName|| "");
+        //   localStorage.setItem("avtar",user?.avtar|| "");
+        //   // Store user object as a string
+        // }
      // Store token in localStorage
         navigate("/dashboard");
       } else {
