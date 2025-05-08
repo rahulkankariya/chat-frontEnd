@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import socket from "./socket";  // Assuming you have your socket instance here
 import { AuthContext } from "../context/AuthContextType";  // Your auth context
 import { SocketContext } from "./SocketContextType";  // Socket context for sharing state
@@ -6,6 +6,14 @@ import { SocketContext } from "./SocketContextType";  // Socket context for shar
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { token } = useContext(AuthContext)!;  // Assuming you have a token in your context
   const [onlineUsers, setOnlineUsers] = useState<{ [key: string]: number }>({});
+
+  // Use useRef to store onlineUsers without triggering rerenders
+  const onlineUsersRef = useRef(onlineUsers);
+
+  useEffect(() => {
+    // Update ref whenever onlineUsers state changes
+    onlineUsersRef.current = onlineUsers;
+  }, [onlineUsers]);
 
   useEffect(() => {
     if (!token) return;
@@ -22,6 +30,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         ...prev,
         [userId]: status === "online" ? 1 : 0,
       }));
+    });
+
+    // Listen to the event when the server asks for the current online users
+    socket.on("chat-user-list", () => {
+      // Emit current users using the ref to avoid re-render on state change
+      socket.emit("current-users", onlineUsersRef.current);
     });
 
     return () => {

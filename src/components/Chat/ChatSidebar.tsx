@@ -23,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
   };
 
   const filteredUsers = users.filter((user) => {
+    console.log("USer==?",user)
     if (activeTab === 'All') return true;
     return user.type === activeTab;
   }).filter((user) => {
@@ -37,16 +38,16 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
         <div className="flex items-center gap-3">
           <div className="relative">
             <img
-              src={users[16]?.avatar}
+              src={users[1]?.avatar}
               alt="Profile"
               className="w-12 h-12 rounded-full object-cover"
             />
             <span
-              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${users[16]?.online ? 'bg-green-500' : 'bg-red-400'}`}
+              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${users[1]?.online ? 'bg-green-500' : 'bg-red-400'}`}
             ></span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">{users[16].name}</span>
+            <span className="text-sm font-semibold">{users[1].name}</span>
             <span className="text-sm text-gray-500">Info Account</span>
           </div>
         </div>
