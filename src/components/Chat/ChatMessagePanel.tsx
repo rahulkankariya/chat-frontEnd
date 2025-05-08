@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import MicIcon from '@mui/icons-material/Mic';
 import SendIcon from '@mui/icons-material/Send';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DoneIcon from '@mui/icons-material/Done';
@@ -60,8 +59,8 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online })
   ]);
 
   const [input, setInput] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [] = useState(false);
+  const [_audioUrl, setAudioUrl] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const sendMessage = () => {
@@ -82,7 +81,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online })
     }
   };
 
-  const handleVoiceMessage = (blob: Blob, url: string) => {
+  const handleVoiceMessage = (_blob: Blob, url: string) => {
     setMessages((prev) => [
       ...prev,
       {
@@ -91,7 +90,9 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online })
         timestamp: Date.now(),
       },
     ]);
-    setAudioUrl(url); // Set audioUrl to display audio controls
+    setAudioUrl(url);
+    
+    // Set audioUrl to display audio controls
   };
 
   useEffect(() => {
