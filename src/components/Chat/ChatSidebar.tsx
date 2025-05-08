@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChatUser } from '../../interface/ChatUser';
 import { Search } from '@mui/icons-material';
 import UserProfile from './UserProfile';
+import TabGroup from '../common/tabs/tabGroup';
 
 interface SidebarProps {
   users: ChatUser[];
@@ -10,14 +11,19 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'personal' | 'groups'>('all');
+
   const [isSearchOpen, setIsSearchOpen] = useState(false); // State to toggle search bar visibility
   const [searchQuery, setSearchQuery] = useState(''); // State to store the search query
+  const tabs = ['All', 'Personal', 'Groups', ];
+  const [activeTab, setActiveTab] = useState<string>('All');
 
-  const tabs: ('all' | 'personal' | 'groups')[] = ['all', 'personal', 'groups'];
+  const handleTabChange = (tab: string) => {
+    console.log('Tab selected:', tab);
+    setActiveTab(tab);
+  };
 
   const filteredUsers = users.filter((user) => {
-    if (activeTab === 'all') return true;
+    if (activeTab === 'All') return true;
     return user.type === activeTab;
   }).filter((user) => {
     // Filter users based on the search query
@@ -66,8 +72,8 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
 
       {/* Tabs */}
       <div className="w-full px-2 p-5 rounded-md">
-        <div className="flex gap-1 bg-[#F7F7F7] border border-[#F7F7F7] p-3 rounded-3xl">
-          {tabs.map((tab) => (
+        <div className="flex gap-1 bg-[#F7F7F7] border border-[#F7F7F7]  rounded-3xl">
+          {/* {tabs.map((tab) => (
             <div
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -76,7 +82,16 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
             >
               {tab}
             </div>
-          ))}
+          ))} */}
+          <TabGroup
+        tabs={tabs}
+        selectedTab={activeTab}
+        onTabChange={handleTabChange}
+        activeBg="bg-white"
+        inactiveBg="bg-gray-100"
+        activeTextColor="text-[#3A60AE]"
+        inactiveTextColor="text-gray-700"
+      />
         </div>
       </div>
 

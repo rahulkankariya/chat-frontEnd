@@ -5,15 +5,13 @@ interface ToastProps {
   type: "success" | "error";
   message: string;
   onClose: (id: string) => void;
-  autoClose?: number; // Time in ms before auto-closing (optional)
+  autoClose?: number;
 }
 
 const Toast: React.FC<ToastProps> = ({ id, type, message, onClose, autoClose = 5000 }) => {
   useEffect(() => {
-    if (autoClose) {
-      const timer = setTimeout(() => onClose(id), autoClose);
-      return () => clearTimeout(timer);
-    }
+    const timer = setTimeout(() => onClose(id), autoClose);
+    return () => clearTimeout(timer);
   }, [id, onClose, autoClose]);
 
   return (
@@ -23,12 +21,7 @@ const Toast: React.FC<ToastProps> = ({ id, type, message, onClose, autoClose = 5
       }`}
     >
       <span>{message}</span>
-      <button
-        onClick={() => onClose(id)}
-        className="ml-4 text-white hover:text-gray-200"
-      >
-        ✕
-      </button>
+      <button onClick={() => onClose(id)} className="ml-4 hover:text-gray-200">✕</button>
     </div>
   );
 };

@@ -14,6 +14,7 @@ import routes from "./routes";
 import Loader from "./components/Pages/loader";
 import { SocketProvider } from "./socket/SocketContext";
 import "./App.css";
+import { ToastProvider } from "./components/common/toast/ToastContext";
 
 const AuthManager: React.FC = () => {
   const { setToken } = useContext(AuthContext)!;
@@ -33,7 +34,8 @@ const AuthManager: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
+    <ToastProvider>
+       <AuthProvider>
       <SocketProvider>
         <Router>
           <AuthManager />
@@ -61,6 +63,8 @@ const App: React.FC = () => {
         </Router>
       </SocketProvider>
     </AuthProvider>
+      </ToastProvider>
+   
   );
 };
 

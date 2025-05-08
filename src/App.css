@@ -17,3 +17,27 @@
     background-color: #D1D7DB; /* Hover effect for the scrollbar thumb */
   }
   
+/* Horizontal scrollbar customization */
+.scrollbar-x::-webkit-scrollbar {
+  height: 5px;
+  width: 8px;
+}
+
+.scrollbar-x::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-x::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: 8px;
+}
+
+.scrollbar-x::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Firefox */
+.scrollbar-x {
+  background-color: #F1F1F1; /* Background color of the track */
+  border-radius: 10px;
+}

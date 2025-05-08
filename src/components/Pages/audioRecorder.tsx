@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import MicIcon from '@mui/icons-material/Mic';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from '@mui/material';
-
+import { useToast } from "../common/toast/ToastContext";
 interface AudioRecorderProps {
   onStop: (blob: Blob, url: string) => void;
 }
@@ -11,7 +11,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onStop }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
-
+  const { showToast } = useToast();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<number | null>(null);
@@ -61,7 +61,8 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onStop }) => {
           setTimer((prev) => prev + 1);
         }, 1000);
       } catch (error) {
-        console.error('Error accessing microphone:', error);
+        showToast("error", "Mic device not found. Please check your microphone settings.")
+        // console.error('Error accessing microphone:', error);
       }
     }
   };
