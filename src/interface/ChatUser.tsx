@@ -3,6 +3,6 @@ export interface ChatUser {
     name: string;
     avatar: string;
     online: boolean;
-    type: 'personal' | 'groups';
+    type?: 'personal' | 'groups';
   }
   
