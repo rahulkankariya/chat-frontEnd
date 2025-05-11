@@ -4,82 +4,119 @@ import Sidebar from './ChatSidebar';
 import MessagePanel from './ChatMessagePanel';
 import { SocketContext } from '../../socket/SocketContextType';
 import socket from '../../socket/socket';
-
+import { getUserFromStorage } from '../../utils/storage';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 const Dashboard: React.FC = () => {
-  const [users, setUsers] = useState<ChatUser[]>([]);  // State to hold the user list
-  const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);  // State for selected user
-  const { onlineUsers } = useContext(SocketContext) || {};  // Context for online user states (safe fallback)
+  const [users, setUsers] = useState<ChatUser[]>([]); // State to hold the user list
+  const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null); // State for selected user
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const [totalPages, setTotalPages] = useState(1); // Track total pages
+  const { onlineUsers } = useContext(SocketContext) || {}; // Context for online user states
 
-  const [currentPage, setCurrentPage] = useState(1);  // Track current page
-  const [totalPages, setTotalPages] = useState(1);  // Track total pages
+  const itemsPerPage = 10; // Number of users per page
+  const userProfile = getUserFromStorage();
 
-  const itemsPerPage = 10;  // Number of users per page
+  // Fetch user profile from local storage (e.g., logged-in user)
+  // const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}') || {
+  //   name: 'Guest',
+  //   avatar: '',
+  // };
 
-  // Fetch chat user list from backend with pagination
+  // Fetch chat user list from backend
   const fetchChatUserList = (pageIndex: number, pageSize: number) => {
-    console.log("fetchChatUserList==>",pageIndex,pageSize)
-    socket.emit('chat-user-list', pageIndex, pageSize);  // Emit the event to fetch user list (pageIndex, pageSize)
+    setIsLoading(true);
+    setError(null);
+    socket.emit('chat-user-list', pageIndex, pageSize); // Emit event to fetch user list
+  };
 
-    socket.on('chat-user-list', (response: any) => {
+  // Set up socket listener for chat-user-list
+  useEffect(() => {
+    const handleChatUserList = (response: any) => {
+      setIsLoading(false);
       if (response.executed === 1) {
         const fetchedUsers = response?.data?.data?.userList.map((user: any) => ({
           id: user.id,
-          name: user.firstName + " " + user.lastName,
+          name: user.firstName + ' ' + user.lastName,
           avatar: user.avatar_url,
-          online: onlineUsers?.[user.id] === 1,  // Check if the user is online from SocketContext
+          online: onlineUsers?.[user.id] === 1,
         }));
 
-        // Update the user list and pagination state
-        setUsers((prevUsers) => [...prevUsers, ...fetchedUsers]);
-        console.log("Users==?>",users)
-        // Set total pages based on the response
-        setTotalPages(response?.data?.data?.totalPages || 1); 
+        // Append users for pagination, avoid duplicates
+        setUsers((prevUsers) => {
+          const existingIds = new Set(prevUsers.map((u) => u.id));
+          const newUsers = fetchedUsers.filter((u: { id: number; }) => !existingIds.has(u.id));
+          return [...prevUsers, ...newUsers];
+        });
 
-        // Select the first user if none is selected
-        setSelectedUser((prevSelectedUser) => prevSelectedUser || fetchedUsers[0]);
+        // Update total pages
+        setTotalPages(response?.data?.data?.totalPages || 1);
+
+        // Select first user if none is selected and users are available
+        if (!selectedUser && fetchedUsers.length > 0) {
+          setSelectedUser(fetchedUsers[0]);
+        }
       } else {
-        console.error('Failed to fetch user list');
+        setError('Failed to fetch user list');
       }
-    });
-  };
+    };
 
-  // Load the user list when the component mounts or when currentPage changes
+    socket.on('chat-user-list', handleChatUserList);
+
+    // Clean up listener on unmount
+    return () => {
+      socket.off('chat-user-list', handleChatUserList);
+    };
+  }, [selectedUser, onlineUsers]); // Dependencies: selectedUser, onlineUsers
+
+  // Fetch users when currentPage changes
   useEffect(() => {
-    console.log("Fetching data for page", currentPage);
     fetchChatUserList(currentPage, itemsPerPage);
-  }, [currentPage]);  // Only fetch new users when currentPage changes
+  }, [currentPage]);
 
-  // Handle scroll to fetch next page of users
+  // Handle scroll for infinite scrolling
   const handleScroll = (e: React.UIEvent<HTMLUListElement>) => {
     const el = e.currentTarget;
-    const isBottom = el.scrollHeight - el.scrollTop === el.clientHeight;
+    const isBottom = Math.abs(el.scrollHeight - el.scrollTop - el.clientHeight) < 1;
 
-    if (isBottom && currentPage < totalPages) {
-      setCurrentPage(prev => (prev < totalPages ? prev + 1 : prev));
+    if (isBottom && currentPage < totalPages && !isLoading) {
+      setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
     }
   };
-
-  if (!selectedUser) return null;  // If there's no selected user, don't render MessagePanel yet
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F8F7FC] p-4">
       {/* Sidebar */}
       <div className="w-80 h-full bg-white shadow-md rounded-[10px]">
         <Sidebar
+          userProfile={userProfile} // Pass user profile to Sidebar
           users={users}
-          selectedUser={selectedUser.id}
+          // onSelectUser={selectedUser?.id}
           onSelectUser={(user) => setSelectedUser(user)}
-          onScroll={handleScroll}  // Pass scroll handler to Sidebar
+          onScroll={handleScroll}
+          isLoading={isLoading}
+          error={error}
         />
       </div>
 
       {/* Message Panel */}
       <div className="flex-1 bg-white shadow-md rounded-[10px] ml-4">
-        <MessagePanel
-          userName={selectedUser.name}
-          avatar={selectedUser.avatar}
-          online={selectedUser.online}
-        />
+        {selectedUser ? (
+          <MessagePanel
+            userName={selectedUser.name}
+            avatar={selectedUser.avatar}
+            online={selectedUser.online}
+          />
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center text-gray-500 space-y-2">
+       <ChatBubbleOutlineIcon style={{ fontSize: 40 }} />
+          <div className="text-lg font-semibold">No Chat Selected</div>
+          <div className="text-sm text-gray-400">Select a user from the sidebar to start chatting</div>
+        </div>
+        
+        
+        )}
       </div>
     </div>
   );

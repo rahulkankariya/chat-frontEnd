@@ -1,4 +1,6 @@
 export interface ChatUser {
+    messageStatus: string;
+    lastMessage: string;
     id:number
     name: string;
     avatar: string;

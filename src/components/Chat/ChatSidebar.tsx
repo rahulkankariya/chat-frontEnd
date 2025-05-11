@@ -1,57 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ChatUser } from '../../interface/ChatUser';
 import { Search } from '@mui/icons-material';
 import UserProfile from './UserProfile';
 import TabGroup from '../common/tabs/tabGroup';
 
 interface SidebarProps {
+  userProfile: { firstName?: string;lastName:string, avatar: string; online?: boolean }; // Logged-in user profile
   users: ChatUser[];
-  selectedUser: number;
+  selectedUser?: string | number; // Allow string or number for ID
   onSelectUser: (user: ChatUser) => void;
   onScroll?: (e: React.UIEvent<HTMLUListElement, UIEvent>) => void;
+  isLoading?: boolean; // From Dashboard
+  error?: string | null; // From Dashboard
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser,onScroll }) => {
-  console.log("SideNav==>",Sidebar)
-  const [isSearchOpen, setIsSearchOpen] = useState(false); // State to toggle search bar visibility
-  const [searchQuery, setSearchQuery] = useState(''); // State to store the search query
-  const [activeTab, setActiveTab] = useState<string>('All'); // Tab state
- // Number of items per page (you can adjust this)
-  console.log("SideNav==?", users, selectedUser)
+const Sidebar: React.FC<SidebarProps> = ({
+  userProfile,
+  users,
+  selectedUser,
+  onSelectUser,
+  onScroll,
+  isLoading = false,
+  error = null,
+}) => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false); // Toggle search bar
+  const [searchQuery, setSearchQuery] = useState(''); // Search input
+  const [activeTab, setActiveTab] = useState<string>('All'); // Active tab
+
   const tabs = ['All', 'Personal', 'Groups'];
 
+  // Filter users based on search query and active tab
+  const filteredUsers = useMemo(() => {
+    let result = users;
+
+    // Filter by search query (case-insensitive)
+    if (searchQuery) {
+      result = result.filter((user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // // Filter by tab (example logic, adjust based on your data)
+    // if (activeTab === 'Personal') {
+    //   result = result.filter((user) => user.type === 'personal'); // Assume user.type exists
+    // } else if (activeTab === 'Groups') {
+    //   result = result.filter((user) => user.type === 'group'); // Assume user.type exists
+    // }
+
+    return result;
+  }, [users, searchQuery, activeTab]);
+
   const handleTabChange = (tab: string) => {
-    console.log('Tab selected:', tab);
     setActiveTab(tab);
-  // Reset to the first page when tab changes
   };
-
-
 
   return (
     <div className="flex flex-col h-full bg-white shadow-md rounded-[10px] md:w-80 w-full">
-      {/* Header */}ddd
-      <div className="flex items-center justify-between p-4">
+      {/* Header: User Profile */}
+      <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-3">
           <div className="relative">
             <img
-              src={users[1]?.avatar}
+              src={userProfile.avatar || 'default-avatar.png'}
               alt="Profile"
               className="w-12 h-12 rounded-full object-cover"
             />
             <span
-              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${users[1]?.online ? 'bg-green-500' : 'bg-red-400'}`}
+              className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                'bg-green-500' 
+              }`}
             ></span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">{users[1]?.name || "N/A"}</span>
+            <span className="text-sm font-semibold">{userProfile.firstName + " "+ userProfile.lastName + " "  || 'Guest'}</span>
             <span className="text-sm text-gray-500">Info Account</span>
           </div>
         </div>
         <Search
           style={{ fontSize: 24 }}
           className="text-gray-600 cursor-pointer"
-          onClick={() => setIsSearchOpen(!isSearchOpen)} // Toggle search bar visibility
+          onClick={() => setIsSearchOpen(!isSearchOpen)}
         />
       </div>
 
@@ -69,8 +97,8 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser,onS
       )}
 
       {/* Tabs */}
-      <div className="w-full px-2 p-5 rounded-md">
-        <div className="flex gap-1 bg-[#F7F7F7] border border-[#F7F7F7]  rounded-3xl">
+      <div className="w-full px-2 py-5">
+        <div className="flex gap-1 bg-[#F7F7F7] border border-[#F7F7F7] rounded-3xl">
           <TabGroup
             tabs={tabs}
             selectedTab={activeTab}
@@ -87,26 +115,43 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser,onS
       <ul
         className="flex-1 overflow-y-auto p-2 space-y-1 bg-white"
         style={{ maxHeight: 'calc(100vh - 240px)' }}
-        onScroll={onScroll} // Attach scroll event handler
+        onScroll={onScroll}
       >
-        {users.length === 0 ? (
-          <li className="text-center p-4">No users found</li>
-        ) : (
-          users.map((user,index) => (
-            user.avatar!=""?
-            <UserProfile
-              key={index}
-              avatar={user.avatar}
-              name={user.name}
-              online={user.online}
-              onSelectUser={() => onSelectUser(user)}
-              isSelected={selectedUser === user.id}
-              message="Hello! How are you?"
-              lastMessageTime="10:45 AM"
-              messageStatus={['pending', 'sent', 'delivered', 'read'][user.id % 4] as any}
-            />
-            :""
-          ))
+        {error && (
+          <li className="text-center p-4 text-red-500">{error}</li>
+        )}
+        {isLoading && filteredUsers.length === 0 && (
+          <li className="text-center p-4 text-gray-500">Loading...</li>
+        )}
+        {!isLoading && !error && filteredUsers.length === 0 && (
+          <li className="text-center p-4 text-gray-500">No users found</li>
+        )}
+        {filteredUsers.map((user, index) => (
+          // <UserProfile
+          //   key={user.id} // Use user.id instead of index
+          //   avatar={user.avatar || 'default-avatar.png'} // Fallback avatar
+          //   name={user.name}
+          //   online={user.online}
+          //   onSelectUser={() => onSelectUser(user)}
+          //   isSelected={selectedUser === user.id}
+          //   message={user.lastMessage || 'No messages yet'} // Assume user.lastMessage exists
+          //   lastMessageTime={user.lastMessage || ''} // Assume user.lastMessageTime exists
+          //   messageStatus={user.messageStatus || 'sent'} // Assume user.messageStatus exists
+          // />
+          <UserProfile
+          key={index}
+          avatar={user.avatar}
+          name={user.name}
+          online={user.online}
+          onSelectUser={() => onSelectUser(user)}
+          isSelected={selectedUser === user.id}
+          message="Hello! How are you?"
+          lastMessageTime="10:45 AM"
+          messageStatus={['pending', 'sent', 'delivered', 'read'][user.id % 4] as any}
+        />
+        ))}
+        {isLoading && filteredUsers.length > 0 && (
+          <li className="text-center p-4 text-gray-500">Loading more...</li>
         )}
       </ul>
     </div>
