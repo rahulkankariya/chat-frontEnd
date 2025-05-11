@@ -12,7 +12,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser,onScroll }) => {
-
+  console.log("SideNav==>",Sidebar)
   const [isSearchOpen, setIsSearchOpen] = useState(false); // State to toggle search bar visibility
   const [searchQuery, setSearchQuery] = useState(''); // State to store the search query
   const [activeTab, setActiveTab] = useState<string>('All'); // Tab state
