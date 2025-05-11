@@ -8,31 +8,46 @@ interface SidebarProps {
   users: ChatUser[];
   selectedUser: number;
   onSelectUser: (user: ChatUser) => void;
+  onScroll?: (e: React.UIEvent<HTMLUListElement, UIEvent>) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) => {
+const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser,onScroll }) => {
 
   const [isSearchOpen, setIsSearchOpen] = useState(false); // State to toggle search bar visibility
   const [searchQuery, setSearchQuery] = useState(''); // State to store the search query
-  const tabs = ['All', 'Personal', 'Groups', ];
-  const [activeTab, setActiveTab] = useState<string>('All');
+  const [activeTab, setActiveTab] = useState<string>('All'); // Tab state
+ // Number of items per page (you can adjust this)
+
+  const tabs = ['All', 'Personal', 'Groups'];
 
   const handleTabChange = (tab: string) => {
     console.log('Tab selected:', tab);
     setActiveTab(tab);
+  // Reset to the first page when tab changes
   };
 
-  const filteredUsers = users.filter((user) => {
-    console.log("USer==?",user)
-    if (activeTab === 'All') return true;
-    return user.type === activeTab;
-  }).filter((user) => {
-    // Filter users based on the search query
-    return user.name.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+  // const filteredUsers = users
+  //   .filter((user) => {
+  //     if (activeTab === 'All') return true;
+  //     return user.type === activeTab;
+  //   })
+  //   .filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  // Paginate the filtered users
+  // const displayedUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Handle scroll event to load more users when bottom is reached
+  // const handleScroll = (e: React.UIEvent<HTMLUListElement, UIEvent>) => {
+  //   console.log("e==>",e.currentTarget.scrollHeight,"e.currentTarget.clientHeight",e.currentTarget.clientHeight)
+  //   const bottom = e.currentTarget.scrollHeight === e.currentTarget.scrollTop + e.currentTarget.clientHeight;
+  //   if (bottom) {
+  //     setCurrentPage((prevPage) => prevPage + 1); // Load next page when scrolled to the bottom
+  //   }
+  //   console.log("prevPage",currentPage)
+  // };
 
   return (
-    <div className="flex flex-col h-full bg-white shadow-md rounded-[10px] md:w-80 w-full"> {/* Added responsive width */}
+    <div className="flex flex-col h-full bg-white shadow-md rounded-[10px] md:w-80 w-full">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
@@ -47,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
             ></span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">{users[1].name}</span>
+            <span className="text-sm font-semibold">{users[1]?.name}</span>
             <span className="text-sm text-gray-500">Info Account</span>
           </div>
         </div>
@@ -74,46 +89,43 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser }) 
       {/* Tabs */}
       <div className="w-full px-2 p-5 rounded-md">
         <div className="flex gap-1 bg-[#F7F7F7] border border-[#F7F7F7]  rounded-3xl">
-          {/* {tabs.map((tab) => (
-            <div
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 text-center capitalize text-sm font-bold py-[3px] rounded-3xl cursor-pointer transition
-                ${activeTab === tab ? 'bg-white text-[#3A60AE]' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold'}`}
-            >
-              {tab}
-            </div>
-          ))} */}
           <TabGroup
-        tabs={tabs}
-        selectedTab={activeTab}
-        onTabChange={handleTabChange}
-        activeBg="bg-white"
-        inactiveBg="bg-gray-100"
-        activeTextColor="text-[#3A60AE]"
-        inactiveTextColor="text-gray-700"
-      />
+            tabs={tabs}
+            selectedTab={activeTab}
+            onTabChange={handleTabChange}
+            activeBg="bg-white"
+            inactiveBg="bg-gray-100"
+            activeTextColor="text-[#3A60AE]"
+            inactiveTextColor="text-gray-700"
+          />
         </div>
       </div>
 
       {/* User List */}
       <ul
         className="flex-1 overflow-y-auto p-2 space-y-1 bg-white"
-        style={{ maxHeight: 'calc(100vh - 240px)' }} // Adjusted height for better fit
+        style={{ maxHeight: 'calc(100vh - 240px)' }}
+        onScroll={onScroll} // Attach scroll event handler
       >
-        {filteredUsers.map((user) => (
-          <UserProfile
-            key={user.id}
-            avatar={user.avatar}
-            name={user.name}
-            online={user.online}
-            onSelectUser={() => onSelectUser(user)}
-            isSelected={selectedUser === user.id}
-            message="Hello! How are you?"
-            lastMessageTime="10:45 AM"
-            messageStatus={['pending', 'sent', 'delivered', 'read'][user.id % 4] as any}
-          />
-        ))}
+        {users.length === 0 ? (
+          <li className="text-center p-4">No users found</li>
+        ) : (
+          users.map((user,index) => (
+            user.avatar!=""?
+            <UserProfile
+              key={index}
+              avatar={user.avatar}
+              name={user.name}
+              online={user.online}
+              onSelectUser={() => onSelectUser(user)}
+              isSelected={selectedUser === user.id}
+              message="Hello! How are you?"
+              lastMessageTime="10:45 AM"
+              messageStatus={['pending', 'sent', 'delivered', 'read'][user.id % 4] as any}
+            />
+            :""
+          ))
+        )}
       </ul>
     </div>
   );

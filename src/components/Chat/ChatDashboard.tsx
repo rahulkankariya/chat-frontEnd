@@ -10,45 +10,67 @@ const Dashboard: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);  // State for selected user
   const { onlineUsers } = useContext(SocketContext) || {};  // Context for online user states (safe fallback)
 
-  // Fetch chat user list from backend
-  const fetchChatUserList = () => {
-    socket.emit('chat-user-list', 1, 10);  // Emit the event to fetch user list (pageIndex = 1, pageSize = 10)
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const [totalPages, setTotalPages] = useState(1); // Track total pages
+
+  const itemsPerPage = 10; // Number of users per page
+
+  // Fetch chat user list from backend with pagination
+  const fetchChatUserList = (pageIndex: number, pageSize: number) => {
+    socket.emit('chat-user-list', pageIndex, pageSize);  // Emit the event to fetch user list (pageIndex, pageSize)
 
     socket.once('chat-user-list', (response: any) => {
-      console.log("Response: ", response.data.data.userList);
+      // console.log("Response: ", response);
       if (response.executed === 1) {
         const fetchedUsers = response?.data?.data?.userList.map((user: any) => ({
           id: user.id,
-          name: user.firstName + " "+ user.lastName,
+          name: user.firstName + " " + user.lastName,
           avatar: user.avatar_url,
           online: onlineUsers?.[user.id] === 1,  // Check if the user is online from SocketContext
         }));
-        setUsers(fetchedUsers);
-        setSelectedUser(fetchedUsers[0]);  // Set the first user as the default selected user
+
+        // Update the user list and pagination state
+        setUsers((prevUsers) => [...prevUsers, ...fetchedUsers]); 
+  
+        // Append new users to the existing list
+        setTotalPages(response?.data?.data?.totalPages || 1); // Set total pages based on the response
+        setSelectedUser((prevSelectedUser) => prevSelectedUser || fetchedUsers[0]); // Select the first user if none selected
       } else {
         console.error('Failed to fetch user list');
       }
     });
   };
 
+  // Load the user list when the component mounts or when currentPage changes
   useEffect(() => {
-    fetchChatUserList();  // Fetch the user list on component mount
+    console.log("Fetching data for page", currentPage);
+  
+    fetchChatUserList(currentPage, itemsPerPage);
 
     return () => {
-      socket.off('chat-user-list');  // Cleanup socket listener on component unmount
+      // socket.off('chat-user-list');  // Cleanup socket listener on component unmount
     };
-  }, []);  // Only run once when the component mounts (empty dependency array)
+  }, [currentPage]);  // Only fetch new users when currentPage changes
 
-  // Avoid re-fetching unless onlineUsers or selectedUser actually changes
-  useEffect(() => {
-    if (selectedUser) {
-      const updatedUsers = users.map(user => ({
-        ...user,
-        online: onlineUsers?.[user.id] === 1,
-      }));
-      setUsers(updatedUsers);
+  // Update online status whenever onlineUsers changes
+  // useEffect(() => {
+  //   if (selectedUser) {
+  //     const updatedUsers = users.map(user => ({
+  //       ...user,
+  //       online: onlineUsers?.[user.id] === 1,
+  //     }));
+  //     setUsers(updatedUsers);
+  //   }
+  // }, [onlineUsers, selectedUser]);
+
+  const handleScroll = (e: React.UIEvent<HTMLUListElement>) => {
+    const el = e.currentTarget;
+    const isBottom = el.scrollHeight - el.scrollTop === el.clientHeight;
+    
+    if (isBottom && currentPage < totalPages) {
+      setCurrentPage(prev => (prev < totalPages ? prev + 1 : prev));
     }
-  }, [onlineUsers, selectedUser]);
+  };
 
   if (!selectedUser) return null;  // If there's no selected user, don't render MessagePanel yet
 
@@ -60,6 +82,7 @@ const Dashboard: React.FC = () => {
           users={users}
           selectedUser={selectedUser.id}
           onSelectUser={(user) => setSelectedUser(user)}
+          onScroll={handleScroll} // Pass scroll handler to Sidebar
         />
       </div>
 
