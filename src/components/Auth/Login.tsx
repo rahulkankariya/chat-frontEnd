@@ -8,7 +8,8 @@ import TextInput from "../common/TextInput";
 import SubmitButton from "../common/SubmitButton";
 import apiService from "../../services/apiService";
 import { LoginResponse } from "../../interface/auth";
-import {saveUserToStorage} from '../../utils/storage'
+import {saveUserToStorage} from "../../utils/storage";
+
 type FormData = {
   email: string;
   password: string;
@@ -21,6 +22,7 @@ const Login: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
+
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -28,64 +30,62 @@ const Login: React.FC = () => {
     setIsLoading(true);
     setApiError(null);
 
-    const response = await apiService.post<LoginResponse>("/login", data); // Specify LoginResponse type here
+    try {
+      const response = await apiService.post<LoginResponse>("/login", data);
 
-    if (response.success) {
-      const token = response.data?.token; // Safe to access 'token'
-      const user = response.data?.userDetails;   // Safe to access 'user'
-      // console.log("user=?",response?.data)
-      if (token) {
-        saveUserToStorage(token,user)
+      if (response.success && response.data?.token && response.data?.userDetails) {
+        saveUserToStorage(response.data.token, response.data.userDetails);
         navigate("/dashboard");
       } else {
-        setApiError("Token not received.");
+        setApiError(response.message ?? "Login failed");
       }
-    } else {
-      setApiError(response.message ?? "Login failed");
+    } catch (error: any) {
+      setApiError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
-    <div>
-      <FormContainer title="Sign With Continue" error={apiError}>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-4">
-          <TextInput
-            label="Email"
-            register={register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-                message: "Enter a valid email",
-              },
-            })}
-            error={errors.email}
-            disabled={isLoading}
-          />
-          <TextInput
-            label="Password"
-            register={register("password", {
-              required: "Password is required",
-            })}
-            error={errors.password}
-            disabled={isLoading}
-            isPassword
-          />
-          <SubmitButton
-            label="Login"
-            loadingLabel="Logging in..."
-            isLoading={isLoading}
-          />
-        </form>
-        <div className="pt-3">
-          Don’t have an account?
-          <Link to="/signup" className="font-bold cursor-pointer text-black pl-1">
-            Signup
-          </Link>
-        </div>
-      </FormContainer>
-    </div>
+    <FormContainer title="Sign In to Continue" error={apiError}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-4">
+        <TextInput
+          label="Email"
+          register={register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+              message: "Enter a valid email",
+            },
+          })}
+          error={errors.email}
+          disabled={isLoading}
+        />
+
+        <TextInput
+          label="Password"
+          register={register("password", {
+            required: "Password is required",
+          })}
+          error={errors.password}
+          disabled={isLoading}
+          isPassword
+        />
+
+        <SubmitButton
+          label="Login"
+          loadingLabel="Logging in..."
+          isLoading={isLoading}
+        />
+      </form>
+
+      <div className="pt-3 text-sm text-gray-600">
+        Don’t have an account?
+        <Link to="/signup" className="font-bold text-black pl-1">
+          Sign up
+        </Link>
+      </div>
+    </FormContainer>
   );
 };
 

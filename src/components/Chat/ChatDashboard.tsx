@@ -17,6 +17,7 @@ const Dashboard: React.FC = () => {
 
   // Fetch chat user list from backend with pagination
   const fetchChatUserList = (pageIndex: number, pageSize: number) => {
+    
     socket.emit('chat-user-list', pageIndex, pageSize);  // Emit the event to fetch user list (pageIndex, pageSize)
 
     socket.once('chat-user-list', (response: any) => {
@@ -52,16 +53,7 @@ const Dashboard: React.FC = () => {
     };
   }, [currentPage]);  // Only fetch new users when currentPage changes
 
-  // Update online status whenever onlineUsers changes
-  // useEffect(() => {
-  //   if (selectedUser) {
-  //     const updatedUsers = users.map(user => ({
-  //       ...user,
-  //       online: onlineUsers?.[user.id] === 1,
-  //     }));
-  //     setUsers(updatedUsers);
-  //   }
-  // }, [onlineUsers, selectedUser]);
+
 
   const handleScroll = (e: React.UIEvent<HTMLUListElement>) => {
     const el = e.currentTarget;
@@ -76,8 +68,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F8F7FC] p-4">
+      rahul
       {/* Sidebar */}
+    
       <div className="w-80 h-full bg-white shadow-md rounded-[10px]">
+        
         <Sidebar
           users={users}
           selectedUser={selectedUser.id}

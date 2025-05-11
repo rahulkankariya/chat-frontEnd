@@ -17,7 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser,onS
   const [searchQuery, setSearchQuery] = useState(''); // State to store the search query
   const [activeTab, setActiveTab] = useState<string>('All'); // Tab state
  // Number of items per page (you can adjust this)
-
+  console.log("SideNav==?", users, selectedUser)
   const tabs = ['All', 'Personal', 'Groups'];
 
   const handleTabChange = (tab: string) => {
@@ -26,29 +26,11 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser,onS
   // Reset to the first page when tab changes
   };
 
-  // const filteredUsers = users
-  //   .filter((user) => {
-  //     if (activeTab === 'All') return true;
-  //     return user.type === activeTab;
-  //   })
-  //   .filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  // Paginate the filtered users
-  // const displayedUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-  // Handle scroll event to load more users when bottom is reached
-  // const handleScroll = (e: React.UIEvent<HTMLUListElement, UIEvent>) => {
-  //   console.log("e==>",e.currentTarget.scrollHeight,"e.currentTarget.clientHeight",e.currentTarget.clientHeight)
-  //   const bottom = e.currentTarget.scrollHeight === e.currentTarget.scrollTop + e.currentTarget.clientHeight;
-  //   if (bottom) {
-  //     setCurrentPage((prevPage) => prevPage + 1); // Load next page when scrolled to the bottom
-  //   }
-  //   console.log("prevPage",currentPage)
-  // };
 
   return (
     <div className="flex flex-col h-full bg-white shadow-md rounded-[10px] md:w-80 w-full">
-      {/* Header */}
+      {/* Header */}ddd
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -62,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, selectedUser, onSelectUser,onS
             ></span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">{users[1]?.name}</span>
+            <span className="text-sm font-semibold">{users[1]?.name || "N/A"}</span>
             <span className="text-sm text-gray-500">Info Account</span>
           </div>
         </div>
