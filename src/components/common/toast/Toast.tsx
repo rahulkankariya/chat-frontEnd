@@ -8,7 +8,7 @@ interface ToastProps {
   autoClose?: number;
 }
 
-const Toast: React.FC<ToastProps> = ({ id, type, message, onClose, autoClose = 5000 }) => {
+const Toast: React.FC<ToastProps> = ({ id, type, message, onClose, autoClose = 1000 }) => {
   useEffect(() => {
     const timer = setTimeout(() => onClose(id), autoClose);
     return () => clearTimeout(timer);
