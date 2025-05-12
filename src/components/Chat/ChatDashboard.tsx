@@ -107,6 +107,7 @@ const Dashboard: React.FC = () => {
             userName={selectedUser.name}
             avatar={selectedUser.avatar}
             online={selectedUser.online}
+            reciverId={selectedUser.id}  
           />
         ) : (
           <div className="flex h-full flex-col items-center justify-center text-gray-500 space-y-2">
