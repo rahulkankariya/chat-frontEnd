@@ -61,15 +61,6 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online, r
 
     sendMessage(messageData);
 
-    // setMessages((prev) => [
-    //   ...prev,
-    //   {
-    //     text: input.trim(),
-    //     fromMe: true,
-    //     timestamp: Date.now(),
-    //     status: 'pending',
-    //   },
-    // ]);
     setInput('');
   }, [input, receiverId]);
 
