@@ -6,6 +6,7 @@ import { SocketContext } from '../../socket/SocketContextType';
 import socket from '../../socket/socket';
 import { getUserFromStorage } from '../../utils/storage';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import SideNav from '../Navbar/SideNavbar';
 const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<ChatUser[]>([]); // State to hold the user list
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null); // State for selected user
@@ -90,8 +91,15 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F8F7FC] p-4">
+    <div className='flex justify-between'>
+      <div>
+      <SideNav/>
+      </div>
+    
+ <div className="flex h-screen w-screen overflow-hidden bg-[#F8F7FC] p-4">
       {/* Sidebar */}
+     
+     
       <div className="w-80 h-full bg-white shadow-md rounded-[10px]">
         <Sidebar
           userProfile={userProfile} // Pass user profile to Sidebar
@@ -124,6 +132,8 @@ const Dashboard: React.FC = () => {
         )}
       </div>
     </div>
+    </div>
+   
   );
 };
 

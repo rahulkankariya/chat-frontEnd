@@ -9,7 +9,7 @@ interface AudioRecorderProps {
 
 const AudioRecorder: React.FC<AudioRecorderProps> = ({ onStop }) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [_audioUrl, setAudioUrl] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
   const { showToast } = useToast();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
