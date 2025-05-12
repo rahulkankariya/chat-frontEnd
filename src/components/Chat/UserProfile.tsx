@@ -2,14 +2,14 @@ import React from 'react';
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
-
+import {formatMessageTime} from '../../utils/formatMessageDate'
 interface UserProfileProps {
   avatar: string;
   name: string;
   online: boolean;
   onSelectUser: () => void;
   isSelected: boolean;
-  message: string;
+  lastMessage: string;
   lastMessageTime: string;
   messageStatus: 'pending' | 'sent' | 'delivered' | 'read';
 }
@@ -20,7 +20,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
   online,
   onSelectUser,
   isSelected,
-  message,
+  lastMessage,
   lastMessageTime,
   messageStatus,
 }) => {
@@ -49,11 +49,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
       <div className="flex-1 overflow-hidden">
         <div className="flex justify-between items-center">
           <span className="text-sm font-medium truncate">{name}</span>
-          <span className="text-[10px] text-gray-400">{lastMessageTime}</span>
+          <span className="text-[10px] text-gray-400">{ formatMessageTime(lastMessageTime)}</span>
         </div>
         <div className="flex justify-between items-center gap-1 text-xs text-gray-500 truncate">
           {/* Message status icon */}
-          <span className="truncate">{message}</span>
+          <span className="truncate">{lastMessage}</span>
           {messageStatus === 'pending' && (
             <HourglassBottomIcon fontSize="inherit" />
           )}

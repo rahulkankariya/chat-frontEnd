@@ -36,11 +36,15 @@ const Dashboard: React.FC = () => {
     const handleChatUserList = (response: any) => {
       setIsLoading(false);
       if (response.executed === 1) {
+        console.log("Online Find==>",response?.data?.data?.userList)
         const fetchedUsers = response?.data?.data?.userList.map((user: any) => ({
           id: user.id,
           name: user.firstName + ' ' + user.lastName,
           avatar: user.avatar_url,
-          online: onlineUsers?.[user.id] === 1,
+          online: user.onlines == 1 ? true:false,
+          lastMessage :user.last_message,
+          lastMessageTime:user.last_message_time,
+        
         }));
 
         // Append users for pagination, avoid duplicates

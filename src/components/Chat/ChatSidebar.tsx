@@ -145,9 +145,9 @@ const Sidebar: React.FC<SidebarProps> = ({
           online={user.online}
           onSelectUser={() => onSelectUser(user)}
           isSelected={selectedUser === user.id}
-          message="Hello! How are you?"
-          lastMessageTime="10:45 AM"
-          messageStatus={['pending', 'sent', 'delivered', 'read'][user.id % 4] as any}
+          lastMessage={user.lastMessage}
+          lastMessageTime={user.lastMessageTime}
+          messageStatus={"sent"}
         />
         ))}
         {isLoading && filteredUsers.length > 0 && (

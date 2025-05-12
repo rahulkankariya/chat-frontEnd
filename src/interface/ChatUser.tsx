@@ -1,7 +1,9 @@
 export interface ChatUser {
+    lastMessageTime: string;
+    lastMessage:string
     messageStatus: string;
-    lastMessage: string;
-    id:string
+
+        id:string
     name: string;
     avatar: string;
     online: boolean;
