@@ -1,3 +1,4 @@
+
 import { toast } from "react-toastify";
 
 interface ApiResponse<T> {
@@ -14,8 +15,9 @@ interface RequestOptions {
   headers?: Record<string, string>;
 }
 
-const BASE_URL = "http://localhost:9000/api/v1/";
+const APIURL = import.meta.env.VITE_API_URL;
 
+const BASE_URL = APIURL + "api/v1/"
 const apiService = {
   async request<T>(url: string, options: RequestOptions): Promise<ApiResponse<T>> {
     const { method, data, headers = {} } = options;
@@ -40,7 +42,7 @@ const apiService = {
       const response = await fetch(fullUrl, config);
       const result = await response.json();
 
-      // console.log("Result ==>", result, "response.ok", response.ok);
+
 
       if (response.status === 401) {
         // Unauthorized - handle logout

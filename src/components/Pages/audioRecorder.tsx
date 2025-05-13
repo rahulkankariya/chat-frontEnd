@@ -20,7 +20,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onStop }) => {
   const handleStartStopRecording = async () => {
     if (isRecording) {
       if (timer < 2) {
-        console.warn('Recording must be at least 2 seconds.');
+        console.error('Recording must be at least 2 seconds.');
         return;
       }
 

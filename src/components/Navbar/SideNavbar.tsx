@@ -9,23 +9,25 @@ import {
   Logout as LogoutIcon,
 } from '@mui/icons-material';
 import { Box, IconButton, Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const menuItems = [
-  { label: 'Dashboard', icon: <DashboardIcon />, route: 'Dashboard' },
-  { label: 'Messages', icon: <MessageIcon />, route: 'Messages' },
-  { label: 'Profile', icon: <PersonIcon />, route: 'Profile' },
-  { label: 'Requests', icon: <MailIcon />, route: 'Requests' },
-  { label: 'Notifications', icon: <NotificationsIcon />, route: 'Notifications' },
-  { label: 'Settings', icon: <SettingsIcon />, route: 'Settings' },
-  { label: 'Logout', icon: <LogoutIcon />, route: 'Logout' },
+  { label: 'Dashboard', icon: <DashboardIcon />, route: 'Dashboard', path: '/dashboard' },
+  { label: 'Messages', icon: <MessageIcon />, route: 'Messages', path: '/messages' },
+  { label: 'Profile', icon: <PersonIcon />, route: 'Profile', path: '/profile' },
+  { label: 'Requests', icon: <MailIcon />, route: 'Requests', path: '/requests' },
+  { label: 'Notifications', icon: <NotificationsIcon />, route: 'Notifications', path: '/notifications' },
+  { label: 'Settings', icon: <SettingsIcon />, route: 'Settings', path: '/settings' },
+  { label: 'Logout', icon: <LogoutIcon />, route: 'Logout', path: '/logout' },
 ];
 
 interface SideNavProps {
-  activeRoute?: string; // Current active route
+  activeRoute?: string;
 }
 
 const SideNav: React.FC<SideNavProps> = ({ activeRoute }) => {
-  console.log("Route==?",activeRoute)
+  const navigate = useNavigate();
+
   return (
     <Box
       sx={{
@@ -53,6 +55,7 @@ const SideNav: React.FC<SideNavProps> = ({ activeRoute }) => {
         {menuItems.map((item) => (
           <Tooltip key={item.label} title={item.label} placement="right">
             <IconButton
+              onClick={() => navigate(item.path)}
               sx={{
                 width: { xs: 48, sm: 56 },
                 height: { xs: 48, sm: 56 },

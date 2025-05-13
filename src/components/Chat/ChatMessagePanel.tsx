@@ -122,7 +122,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online, r
         const parsed = parseMessages(list);
         setMessages((prev) => [...prev, ...parsed]);
       } else {
-        console.warn('New message response malformed:', res);
+        console.error('New message response malformed:', res);
       }
     };
 
