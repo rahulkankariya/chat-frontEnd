@@ -110,10 +110,9 @@ const Dashboard: React.FC = () => {
       </div>
   
       {/* Sidebar (User List) */}
-      {/* Show on md+ OR toggle on mobile */}
       <div
         className={`bg-white shadow-md rounded-[10px] transition-all duration-300 ease-in-out
-          w-full sm:w-[60%] md:w-64 lg:w-80 h-full 
+          w-full sm:w-[40%] md:w-64 lg:w-80 h-full 
           ${showSidebar ? 'block' : 'hidden'} md:block
         `}
       >
@@ -150,7 +149,13 @@ const Dashboard: React.FC = () => {
         )}
       </div>
     </div>
+  
+    {/* Bottom SideNav (Mobile Only) */}
+    <div className="md:hidden w-full h-16 border-t bg-white shadow-md flex items-center justify-around">
+      <SideNav activeRoute={activeRoute} />
+    </div>
   </div>
+  
   
   
   );

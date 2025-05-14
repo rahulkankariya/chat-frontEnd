@@ -31,48 +31,44 @@ const SideNav: React.FC<SideNavProps> = ({ activeRoute }) => {
   return (
     <Box
       sx={{
-        width: { xs: '100%', sm: 72 },
-        height: '100vh',
-        bgcolor: 'background.paper',
-        borderRight: { sm: '1px solid #ddd' },
+        position: { xs: 'fixed', md: 'relative' },
+        bottom: { xs: 0, md: 'auto' },
+        left: { xs: 0, md: 'auto' },
+        width: { xs: '100%', md: 72 },
+        height: { xs: 64, md: '100vh' },
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
+        flexDirection: { xs: 'row', md: 'column' },
+        justifyContent: 'center',
         alignItems: 'center',
-        py: { xs: 2, sm: 4 },
+        backgroundColor: '#fff',
+        borderTop: { xs: '1px solid #ddd', md: 'none' },
+        borderRight: { md: '1px solid #ddd' },
+        zIndex: 20,
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: { xs: 1, sm: 2 },
-          alignItems: 'center',
-          flex: 1,
-          justifyContent: 'center',
-        }}
-      >
-        {menuItems.map((item) => (
-          <Tooltip key={item.label} title={item.label} placement="right">
-            <IconButton
-              onClick={() => navigate(item.path)}
-              sx={{
-                width: { xs: 48, sm: 56 },
-                height: { xs: 48, sm: 56 },
-                color: item.route === activeRoute ? '#3A60AE' : 'grey.600',
-                bgcolor: item.route === activeRoute ? 'rgba(58, 96, 174, 0.1)' : 'transparent',
-                borderRadius: '12px',
-                '&:hover': {
-                  bgcolor: 'rgba(58, 96, 174, 0.2)',
-                },
-              }}
-              aria-label={item.label}
-            >
-              {item.icon}
-            </IconButton>
-          </Tooltip>
-        ))}
-      </Box>
+   {menuItems.map((item) => (
+  <Tooltip key={item.label} title={item.label} placement="top">
+    <IconButton
+      onClick={() => navigate(item.path)}
+      sx={{
+        mx: { xs: 1, md: 0 },
+        my: { xs: 0, md: 1 },
+        color: item.route === activeRoute ? '#3A60AE' : 'grey.600',
+        bgcolor: item.route === activeRoute ? 'rgba(58, 96, 174, 0.1)' : 'transparent',
+        borderRadius: '12px',
+        '&:hover': {
+          bgcolor: 'rgba(58, 96, 174, 0.2)',
+        },
+        '& svg': {
+          fontSize: { xs: '15px', sm:"20px", md: '24px' }, // responsive icon size
+        },
+      }}
+    >
+      {item.icon}
+    </IconButton>
+  </Tooltip>
+))}
+
     </Box>
   );
 };
