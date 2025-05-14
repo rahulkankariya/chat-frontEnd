@@ -53,19 +53,19 @@ const Sidebar: React.FC<SidebarProps> = ({
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
-
+  console.log("System Width==?",window.innerWidth)
   return (
     <div
-  className="flex flex-col h-full bg-white md:shadow-md rounded-[10px] md:w-80 md:p-4"
+  className="flex flex-col h-full bg-white md:shadow-md rounded-[10px]  md:p-4"
   style={{
-    width: window.innerWidth < 768 ? "calc(100% - 4rem)" : undefined,
+    // width: window.innerWidth < 768 ? "calc(100% - 4rem)" : undefined,
     padding: window.innerWidth < 768 ? "10px" : undefined,
   }}
 >
   {/* Header: User Profile */}
       <div className="flex items-center justify-between p-2 md:p-4 border-b">
         <div className="flex items-center gap-3">
-          <div className="relative">
+          <div className="">
             <img
               src={userProfile.avatar || 'default-avatar.png'}
               alt="Profile"

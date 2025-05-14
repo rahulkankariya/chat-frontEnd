@@ -17,28 +17,28 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const { onlineUsers } = useContext(SocketContext) || {};
-  const activeRoute = 'Messages'; // Set active route for this component
-
+  const { onlineUsers } = useContext(SocketContext) || {}; // Get online users from context
   const itemsPerPage = 10;
   const userProfile = getUserFromStorage();
+  const activeRoute = 'Messages';
 
+  // Fetch chat user list with pagination
   const fetchChatUserList = (pageIndex: number, pageSize: number) => {
     setIsLoading(true);
     setError(null);
-    socket.emit('chat-user-list', pageIndex, pageSize);
+    socket.emit('chat-user-list', pageIndex, pageSize); // Emit event to fetch users
   };
 
+  // Handle chat user list response from socket
   useEffect(() => {
     const handleChatUserList = (response: any) => {
       setIsLoading(false);
       if (response.executed === 1) {
-
         const fetchedUsers = response?.data?.data?.userList.map((user: any) => ({
           id: user.id,
-          name: user.firstName + ' ' + user.lastName,
+          name: `${user.firstName} ${user.lastName}`,
           avatar: user.avatar_url,
-          online: user.onlines == 1 ? true : false,
+          online: onlineUsers?.[user.id] === 1,
           lastMessage: user.last_message,
           lastMessageTime: user.last_message_time,
         }));
@@ -66,9 +66,20 @@ const Dashboard: React.FC = () => {
     };
   }, [selectedUser, onlineUsers]);
 
+  // Fetch users on page change
   useEffect(() => {
     fetchChatUserList(currentPage, itemsPerPage);
   }, [currentPage]);
+
+  // Re-map online status on any update
+  useEffect(() => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) => ({
+        ...user,
+        online: onlineUsers?.[user.id] === 1,
+      }))
+    );
+  }, [onlineUsers]);
 
   const handleScroll = (e: React.UIEvent<HTMLUListElement>) => {
     const el = e.currentTarget;
@@ -82,65 +93,66 @@ const Dashboard: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
-    <div className="h-screen w-screen bg-[#F8F7FC] overflow-hidden relative">
-      {/* Fixed Left SideNav */}
-      <div className="fixed top-0 left-0 h-full w-16  bg-white shadow-md z-40">
+    <div className="h-screen w-screen bg-[#F8F7FC] overflow-hidden flex flex-col">
+    {/* Top Navigation Area for Toggle Button (Mobile Only) */}
+    <div className="w-full flex items-center p-4 md:hidden bg-white shadow z-10">
+      <button onClick={() => setShowSidebar((prev) => !prev)}>
+        {showSidebar ? <CloseIcon /> : <MenuIcon />}
+      </button>
+      <span className="ml-4 font-semibold text-gray-700">Messages</span>
+    </div>
+  
+    {/* Main Content Area */}
+    <div className="flex flex-1 overflow-hidden">
+      {/* Left SideNav (visible on md and above) */}
+      <div className="hidden md:flex w-16 bg-white shadow-md">
         <SideNav activeRoute={activeRoute} />
       </div>
-
-      {/* Toggle Button for Sidebar (Mobile only) */}
-      <button
-        className="absolute top-4 left-5 z-50 block md:hidden"
-        onClick={() => setShowSidebar(prev => !prev)}
+  
+      {/* Sidebar (User List) */}
+      {/* Show on md+ OR toggle on mobile */}
+      <div
+        className={`bg-white shadow-md rounded-[10px] transition-all duration-300 ease-in-out
+          w-full sm:w-[60%] md:w-64 lg:w-80 h-full 
+          ${showSidebar ? 'block' : 'hidden'} md:block
+        `}
       >
-        {showSidebar ? <MenuIcon /> : <CloseIcon />}
-      </button>
-
-      {/* Main Area */}
-      <div className="flex h-full pl-16 md:pl-24 md:p-4 sm:p-2 space-x-4">
-        {/* Sidebar (User list) */}
-        <div
-          className={`
-            fixed h-full top-0 bg-white z-50 shadow-md rounded-[10px]
-            transition-transform duration-300 ease-in-out
-            ${showSidebar ? "translate-x-0" : "translate-x-full"}
-            md:relative md:translate-x-0 md:block
-          `}  
-        >
-          <Sidebar
-            userProfile={userProfile}
-            users={users}
-            onSelectUser={(user) => {
-              setSelectedUser(user);
-              setShowSidebar(false); // Hide sidebar on mobile after user selection
-            }}
-            onScroll={handleScroll}
-            isLoading={isLoading}
-            error={error}
+        <Sidebar
+          userProfile={userProfile}
+          users={users}
+          onSelectUser={(user) => {
+            setSelectedUser(user);
+            setShowSidebar(false);
+          }}
+          onScroll={handleScroll}
+          isLoading={isLoading}
+          error={error}
+        />
+      </div>
+  
+      {/* Message Panel */}
+      <div className="flex-1 bg-white shadow-md rounded-[10px] overflow-hidden">
+        {selectedUser ? (
+          <MessagePanel
+            userName={selectedUser.name}
+            avatar={selectedUser.avatar}
+            online={selectedUser.online}
+            receiverId={selectedUser.id}
           />
-        </div>
-
-        {/* Message Panel */}
-        <div className="flex-1 bg-white shadow-md rounded-[10px]">
-          {selectedUser ? (
-            <MessagePanel
-              userName={selectedUser.name}
-              avatar={selectedUser.avatar}
-              online={selectedUser.online}
-              receiverId={selectedUser.id}
-            />
-          ) : (
-            <div className="flex h-full flex-col items-center justify-center text-gray-500 space-y-2">
-              <ChatBubbleOutlineIcon style={{ fontSize: 40 }} />
-              <div className="text-lg font-semibold">No Chat Selected</div>
-              <div className="text-sm text-gray-400">
-                Select a user from the sidebar to start chatting
-              </div>
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center text-gray-500 space-y-2">
+            <ChatBubbleOutlineIcon style={{ fontSize: 40 }} />
+            <div className="text-lg font-semibold">No Chat Selected</div>
+            <div className="text-sm text-gray-400">
+              Select a user from the sidebar to start chatting
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
+  </div>
+  
+  
   );
 };
 

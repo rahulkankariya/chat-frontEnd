@@ -4,7 +4,6 @@ import { lazy, ReactNode } from "react";
 const Login = lazy(() => import("./components/Auth/Login"));
 const Signup = lazy(() => import("./components/Auth/Signup"));
 const Dashboard = lazy(() => import("./components/Chat/ChatDashboard"));
-import AudioRecorderComponent from "./components/Auth/audio";
 const Profile = lazy(() => import("./components/Profile/profile"));
 
 // Route configuration type
@@ -25,7 +24,7 @@ const routes: RouteConfig[] = [
   // Protected routes
   { path: "/dashboard", element: <Dashboard />, protected: true },
   { path: "/profile", element: <Profile />, protected: true },
-  { path: "/settings", element: <AudioRecorderComponent/>, protected: true },
+  { path: "/settings", element: <Dashboard />, protected: true },
   { path: "/orders", element: <div>Orders</div>, protected: true },
   { path: "/admin/dashboard", element: <div>Admin Dashboard</div>, protected: true },
   { path: "/reports", element: <div>Reports</div>, protected: true },
