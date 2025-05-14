@@ -53,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
-  console.log("System Width==?",window.innerWidth)
+  // console.log("System Width==?",window.innerWidth)
   return (
     <div
   className="flex flex-col h-full bg-white md:shadow-md rounded-[10px]  md:p-4"
