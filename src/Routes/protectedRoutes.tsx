@@ -1,8 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useContext, useEffect, ReactNode } from "react";
-import { AuthContext } from "../../context/AuthContextType";
-import { fetchFcmToken } from "../../firebase/fcmToken";
-import React from "react";
+import { AuthContext } from "../context/AuthContextType";
+import { fetchFcmToken } from "../firebase/fcmToken";
 
 interface ProtectedRouteProps {
   children: ReactNode;

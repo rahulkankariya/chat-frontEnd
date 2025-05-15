@@ -6,7 +6,7 @@ import { SocketContext } from '../../socket/SocketContextType';
 import socket from '../../socket/socket';
 import { getUserFromStorage } from '../../utils/storage';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import SideNav from '../Navbar/SideNavbar';
+import SideNav from '../Pages/Navbar/SideNavbar';
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 

@@ -1,9 +1,9 @@
 // src/components/MessagePanel.tsx
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { debounce } from 'lodash';
-import { ChatHeader } from './ChatMessagePannel/ChatHeader';
-import { MessageBubble } from './ChatMessagePannel/MessageBubble';
-import { MessageInput } from './ChatMessagePannel/MessageInput';
+import { ChatHeader } from './chat-message-panel/ChatHeader';
+import { MessageBubble } from './chat-message-panel/MessageBubble';
+import { MessageInput } from './chat-message-panel/MessageInput';
 import { formatDate, parseMessages } from '../../utils/chatUtils';
 import {
   fetchMessageList,
@@ -12,7 +12,7 @@ import {
   onNewMessage,
   MessageListResponse,
   NewMessageResponse,
-} from '../services/socketService';
+} from '../../socket/socketService';
 
 // Interfaces for type safety
 export interface Message {

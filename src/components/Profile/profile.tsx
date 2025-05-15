@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { getUserFromStorage } from '../../utils/storage';
 // import { SocketContext } from '../../socket/SocketContextType';
 import socket from '../../socket/socket';
-import SideNav from '../Navbar/SideNavbar';
+import SideNav from '../Pages/Navbar/SideNavbar';
 
 
 

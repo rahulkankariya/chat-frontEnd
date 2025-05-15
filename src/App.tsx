@@ -9,8 +9,8 @@ import {
 } from "react-router-dom";
 import { useContext, useEffect, Suspense } from "react";
 import { AuthProvider, AuthContext } from "./context/AuthContextType";
-import ProtectedRoute from "./components/Routes/protectedRoutes";
-import routes from "./routes";
+import ProtectedRoute from "./Routes/protectedRoutes";
+import routes from "./Routes/routes";
 import Loader from "./components/Pages/loader";
 import { SocketProvider } from "./socket/SocketContext";
 import "./App.css";
