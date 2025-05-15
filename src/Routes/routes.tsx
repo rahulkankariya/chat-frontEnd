@@ -1,8 +1,8 @@
 import { lazy, ReactNode } from "react";
 
 // Lazy-loaded components
-const Login = lazy(() => import("../components/Auth/login"));
-const Signup = lazy(() => import("../components/Auth/signup"));
+const Login = lazy(() => import("../components/Auth/Login"));
+const Signup = lazy(() => import("../components/Auth/Signup"));
 const Dashboard = lazy(() => import("../components/Chat/ChatDashboard"));
 const Profile = lazy(() => import("../components/Profile/profile"));
 
