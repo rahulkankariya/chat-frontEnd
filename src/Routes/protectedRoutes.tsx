@@ -1,7 +1,8 @@
 import { Navigate } from "react-router-dom";
-import { useContext, useEffect, ReactNode } from "react";
+import { useContext, useEffect, ReactNode, useRef } from "react";
 import { AuthContext } from "../context/AuthContextType";
 import { fetchFcmToken } from "../firebase/fcmToken";
+import { useToast } from "../components/common/toast/ToastContext";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -9,6 +10,8 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const authContext = useContext(AuthContext);
+  const { showToast } = useToast();
+  const hasFetchedToken = useRef(false); // Track if FCM token was fetched
 
   // Check if context is undefined
   if (!authContext) {
@@ -19,7 +22,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // Fetch FCM token when the component mounts and token exists
   useEffect(() => {
-    if (token) {
+    if (token && !hasFetchedToken.current) {
+      hasFetchedToken.current = true; // Prevent re-fetching
       const getFcmToken = async () => {
         try {
           const fcmToken = await fetchFcmToken();
@@ -35,6 +39,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
             //   body: JSON.stringify({ fcmToken }),
             // });
           } else {
+            showToast(
+              "error",
+              "Notification permission denied"
+
+            );
             console.log("No FCM token received (e.g., permission denied)");
           }
         } catch (error) {
@@ -43,7 +52,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       };
       getFcmToken();
     }
-  }, [token]);
+  }, [token, showToast]); // Include showToast in dependencies
 
   if (!token) {
     return <Navigate to="/login" replace />;

@@ -1,5 +1,4 @@
 import { messaging, getToken } from './firebase';
-import { useToast } from "../components/common/toast/ToastContext";
 // Function to request notification permission and get FCM token
 export const fetchFcmToken = async (): Promise<string | null> => {
   try {
