@@ -1,5 +1,5 @@
 // src/services/socketService.ts
-import socket from '../../socket/socket';
+import socket from './socket';
 
 export interface MessageData {
   message: string;

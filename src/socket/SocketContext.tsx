@@ -43,15 +43,15 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
 
     // check redis
-    // socket.emit("ping-redis");
-    // socket.on("pong-redis", (response) => {
-    //   // console.log("Redis Pong Response:", response);
-    //   if (response === "PONG") {
-    //     // console.log("Redis is working!");
-    //   } else {
-    //     console.log("Error: Redis might not be working properly.");
-    //   }
-    // });
+    socket.emit("ping-redis");
+    socket.on("pong-redis", (response) => {
+      // console.log("Redis Pong Response:", response);
+      if (response === "PONG") {
+        // console.log("Redis is working!");
+      } else {
+        console.log("Error: Redis might not be working properly.");
+      }
+    });
 
 
     return () => {

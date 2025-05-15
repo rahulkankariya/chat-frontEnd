@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
-import FormContainer from "../common/FormContainer";
+import FormContainer from "../common/formContainer/FormContainer";
 import TextInput from "../common/input/TextInput";
 import SubmitButton from "../common/button/SubmitButton";
 import apiService from "../../services/apiService";
