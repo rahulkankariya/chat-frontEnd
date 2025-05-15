@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import FormContainer from "../common/formContainer/FormContainer";
 import TextInput from "../common/input/TextInput";
-import SubmitButton from "../common/button/SubmitButton";
+import SubmitButton from "../common/Button/SubmitButton";
 import apiService from "../../services/apiService";
 import { LoginResponse } from "../../interface/auth";
 import {saveUserToStorage} from "../../utils/storage";
