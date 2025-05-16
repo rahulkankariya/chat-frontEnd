@@ -1,31 +1,34 @@
-import { messaging, getToken } from './firebase';
-// Function to request notification permission and get FCM token
-export const fetchFcmToken = async (): Promise<string | null> => {
+// src/firebase/fcmToken.ts
+import { Token } from "@mui/icons-material";
+import { messaging } from "./firebase";
+import { getToken, onMessage } from "firebase/messaging";
+
+export async function fetchFcmToken() {
   try {
-   
-    // Request permission for notifications
     const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      console.log('Notification permission denied');
+    if (permission !== "granted") {
+      console.warn("Notification permission not granted.");
       return null;
     }
 
-    // Get FCM token
-    const token = await getToken(messaging, {
-      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY, // Replace with your VAPID key from Firebase Console
+    const currentToken = await getToken(messaging, {
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY, // You get this from Firebase Console Cloud Messaging tab
     });
-
-    if (token) {
-      // console.log('FCM Token:', token);
-      return token;
+    // console.log("Toekn==?",currentToken)
+    if (currentToken) {
+      return currentToken;
     } else {
-   
-      console.log('No registration token available. Request permission to generate one.');
+      console.warn("No registration token available.");
       return null;
     }
-  } catch (error) {
- 
-    console.error('Error fetching FCM token:', error);
+  } catch (err) {
+    console.error("An error occurred while retrieving token.", err);
     return null;
   }
+}
+
+export const setupOnMessageListener = (callback: (payload: any) => void) => {
+  onMessage(messaging, (payload) => {
+    callback(payload);
+  });
 };

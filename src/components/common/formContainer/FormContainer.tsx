@@ -1,6 +1,6 @@
 import React from "react";
 import { Paper, Typography } from "@mui/material";
-import Logo from "../Pages/logo"; // Adjust path as needed
+import Logo from "../../Pages/logo"; // Adjust path as needed
 
 interface FormContainerProps {
   title: string;

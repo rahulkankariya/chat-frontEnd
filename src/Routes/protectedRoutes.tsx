@@ -1,7 +1,8 @@
+// src/components/ProtectedRoute.tsx
+import React, { useContext, useEffect, ReactNode, useRef } from "react";
 import { Navigate } from "react-router-dom";
-import { useContext, useEffect, ReactNode, useRef } from "react";
 import { AuthContext } from "../context/AuthContextType";
-import { fetchFcmToken } from "../firebase/fcmToken";
+import { fetchFcmToken, setupOnMessageListener } from "../firebase/fcmToken";
 import { useToast } from "../components/common/toast/ToastContext";
 
 interface ProtectedRouteProps {
@@ -11,48 +12,37 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const authContext = useContext(AuthContext);
   const { showToast } = useToast();
-  const hasFetchedToken = useRef(false); // Track if FCM token was fetched
+  const hasFetchedToken = useRef(false);
 
-  // Check if context is undefined
   if (!authContext) {
     throw new Error("ProtectedRoute must be used within an AuthContext Provider");
   }
 
   const { token } = authContext;
 
-  // Fetch FCM token when the component mounts and token exists
   useEffect(() => {
     if (token && !hasFetchedToken.current) {
-      hasFetchedToken.current = true; // Prevent re-fetching
-      const getFcmToken = async () => {
-        try {
-          const fcmToken = await fetchFcmToken();
+      hasFetchedToken.current = true;
+      fetchFcmToken()
+        .then((fcmToken) => {
           if (fcmToken) {
             console.log("FCM Token:", fcmToken);
-            // Optionally send token to backend
-            // await fetch('/api/save-fcm-token', {
-            //   method: 'POST',
-            //   headers: {
-            //     'Content-Type': 'application/json',
-            //     Authorization: `Bearer ${token}`,
-            //   },
-            //   body: JSON.stringify({ fcmToken }),
-            // });
           } else {
-            showToast(
-              "error",
-              "Notification permission denied"
-
-            );
-            console.log("No FCM token received (e.g., permission denied)");
+            showToast("error", "Notification permission denied");
           }
-        } catch (error) {
+        })
+        .catch((error) => {
           console.error("Failed to fetch FCM token:", error);
-        }
-      };
-      getFcmToken();
+        });
     }
-  }, [token, showToast]); // Include showToast in dependencies
+
+    // Setup foreground message listener
+    setupOnMessageListener((payload) => {
+      console.log("Foreground Payload==>",payload)
+      showToast("info", payload.notification?.message || "Notification received");
+      console.log("Foreground message payload:", payload);
+    });
+  }, [token, showToast]);
 
   if (!token) {
     return <Navigate to="/login" replace />;
