@@ -32,6 +32,7 @@ const Dashboard: React.FC = () => {
   // Handle chat user list response from socket
   useEffect(() => {
     const handleChatUserList = (response: any) => {
+      // console.log("REsponse==>",response)
       setIsLoading(false);
       if (response.executed === 1) {
         const fetchedUsers = response?.data?.data?.userList.map((user: any) => ({
@@ -41,6 +42,7 @@ const Dashboard: React.FC = () => {
           online: onlineUsers?.[user.id] === 1,
           lastMessage: user.last_message,
           lastMessageTime: user.last_message_time,
+          messageStatus:user.messageStatus
         }));
 
         setUsers((prevUsers) => {

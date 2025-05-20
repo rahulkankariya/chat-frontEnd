@@ -11,7 +11,7 @@ interface UserProfileProps {
   isSelected: boolean;
   lastMessage: string;
   lastMessageTime: string;
-  messageStatus: 'pending' | 'sent' | 'delivered' | 'read';
+  messageStatus?: 'pending' | 'sent' | 'delivered' | 'read';
 }
 
 const UserProfile: React.FC<UserProfileProps> = ({

@@ -8,7 +8,8 @@ interface MessageBubbleProps {
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({ message }) => {
-  const renderStatusIcon = (status?: Message['status']) => {
+  console.log("Message==?",message)
+  const renderStatusIcon = (status?: Message['messageStatus']) => {
     switch (status) {
       case 'pending':
         return <AccessTimeIcon fontSize="inherit" className="text-gray-400" />;
@@ -47,7 +48,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({ message
               minute: '2-digit',
             })}
           </span>
-          {message.fromMe && renderStatusIcon(message.status)}
+          {message.fromMe && renderStatusIcon(message.messageStatus)}
         </div>
       </div>
     </div>

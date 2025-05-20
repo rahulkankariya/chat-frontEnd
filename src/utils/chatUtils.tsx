@@ -16,10 +16,12 @@ export const formatDate = (timestamp: number): string => {
 };
 
 export const parseMessages = (list: any[]): Message[] => {
+
   return list.map((msg) => ({
     text: msg.message || '',
     audioUrl: msg.mediaType === 'audio' ? msg.mediaUrl : undefined,
     fromMe: msg.fromMe === 1,
     timestamp: msg.createdAt ? new Date(msg.createdAt).getTime() : Date.now(),
+    messageStatus:msg.messageStatus
   }));
 };

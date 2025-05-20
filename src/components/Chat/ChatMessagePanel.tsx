@@ -1,9 +1,9 @@
 // src/components/MessagePanel.tsx
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { debounce } from 'lodash';
-import { ChatHeader } from './chat-message-panel/ChatHeader';
-import { MessageBubble } from './chat-message-panel/MessageBubble';
-import { MessageInput } from './chat-message-panel/MessageInput';
+import { ChatHeader } from './Chat-Message-Panel/ChatHeader';
+import { MessageBubble } from './Chat-Message-Panel/MessageBubble';
+import { MessageInput } from './Chat-Message-Panel/MessageInput';
 import { formatDate, parseMessages } from '../../utils/chatUtils';
 import {
   fetchMessageList,
@@ -20,7 +20,7 @@ export interface Message {
   audioUrl?: string;
   fromMe: boolean;
   timestamp: number;
-  status?: 'pending' | 'sent' | 'delivered' | 'read';
+  messageStatus?: 'pending' | 'sent' | 'delivered' | 'read';
 }
 
 interface MessagePanelProps {
@@ -28,6 +28,7 @@ interface MessagePanelProps {
   avatar: string;
   online: boolean;
   receiverId: string;
+  messageStatus?: 'pending' | 'sent' | 'delivered' | 'read';
 }
 
 const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online, receiverId }) => {
@@ -83,6 +84,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online, r
         fromMe: true,
         timestamp: Date.now(),
         status: 'pending',
+        
       },
     ]);
   }, [receiverId]);
@@ -91,9 +93,10 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online, r
   const loadMessages = useCallback(async () => {
     try {
       const res = await fetchMessageList(receiverId, pageIndex, 50);
+      console.log("REs==?",res)
       const list = res.data?.data?.messageList ?? [];
       const parsed = parseMessages(list);
-
+      console.log("PArse==>",parsed)
       setMessages((prev) => (pageIndex === 1 ? parsed : [...parsed, ...prev]));
       setHasMore(list.length === 50);
     } catch (error) {
@@ -164,7 +167,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ userName, avatar, online, r
     acc[dateKey].push(msg);
     return acc;
   }, {} as Record<string, Message[]>);
-
+  
   return (
     <div className="flex flex-col h-full rounded-[10px]" role="region" aria-label="Chat panel">
       <ChatHeader userName={userName} avatar={avatar} online={online} />

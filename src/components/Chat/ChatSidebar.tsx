@@ -28,11 +28,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [activeTab, setActiveTab] = useState<string>('All'); // Active tab
 
   const tabs = ['All', 'Personal', 'Groups'];
-
+console.log("User==?",users)
   // Filter users based on search query and active tab
   const filteredUsers = useMemo(() => {
     let result = users;
-
+    console.log("Reslt==")
     // Filter by search query (case-insensitive)
     if (searchQuery) {
       result = result.filter((user) =>
@@ -133,17 +133,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <li className="text-center p-4 text-gray-500">No users found</li>
         )}
         {filteredUsers.map((user, index) => (
-          // <UserProfile
-          //   key={user.id} // Use user.id instead of index
-          //   avatar={user.avatar || 'default-avatar.png'} // Fallback avatar
-          //   name={user.name}
-          //   online={user.online}
-          //   onSelectUser={() => onSelectUser(user)}
-          //   isSelected={selectedUser === user.id}
-          //   message={user.lastMessage || 'No messages yet'} // Assume user.lastMessage exists
-          //   lastMessageTime={user.lastMessage || ''} // Assume user.lastMessageTime exists
-          //   messageStatus={user.messageStatus || 'sent'} // Assume user.messageStatus exists
-          // />
+        
           <UserProfile
           key={index}
           avatar={user.avatar}
@@ -153,7 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           isSelected={selectedUser === user.id}
           lastMessage={user.lastMessage}
           lastMessageTime={user.lastMessageTime}
-          messageStatus={"sent"}
+          messageStatus={user.messageStatus}
         />
         ))}
         {isLoading && filteredUsers.length > 0 && (
